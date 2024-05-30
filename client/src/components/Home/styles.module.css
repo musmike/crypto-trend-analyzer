@@ -1,0 +1,47 @@
+.home_container {
+    display: flex;
+    flex-direction: column;
+    max-width: 900px;
+    margin: 0 auto; 
+}
+
+.left_container,
+.right_container {
+    padding: 20px;
+}
+
+.crypto_table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.crypto_table td {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+.crypto_table td:first-child {
+    font-weight: bold;
+}
+
+.price {
+    margin-left: 10px;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.crypto_table td img {
+    vertical-align: middle;
+}
+
+@media screen and (min-width: 768px) {
+    .home_container {
+        flex-direction: row; 
+    }
+
+    .left_container,
+    .right_container {
+        flex: 1;
+        margin: 0 10px;
+    }
+}
