@@ -65,23 +65,23 @@ const Home = () => {
                 <table className={styles.crypto_table}>
                     <tbody>
                         <tr>
-                            <td><img src={bitcoinIcon} alt="Bitcoin icon" style={{ width: '32px', height: '32px' }} /> Bitcoin (BTC)</td>
+                            <td><img src={bitcoinIcon} alt="Bitcoin icon" /> Bitcoin (BTC)</td>
                             <td>{cryptoPrices.bitcoin ? `$${cryptoPrices.bitcoin}` : 'Ładowanie...'}</td>
                         </tr>
                         <tr>
-                            <td><img src={ethereumIcon} alt="Ethereum icon" style={{ width: '32px', height: '32px' }} /> Ethereum (ETH)</td>
+                            <td><img src={ethereumIcon} alt="Ethereum icon" /> Ethereum (ETH)</td>
                             <td>{cryptoPrices.ethereum ? `$${cryptoPrices.ethereum}` : 'Ładowanie...'}</td>
                         </tr>
                         <tr>
-                            <td><img src={binanceCoinIcon} alt="Binance Coin icon" style={{ width: '32px', height: '32px' }} /> Binance Coin (BNB)</td>
+                            <td><img src={binanceCoinIcon} alt="Binance Coin icon" /> Binance Coin (BNB)</td>
                             <td>{cryptoPrices.binanceCoin ? `$${cryptoPrices.binanceCoin}` : 'Ładowanie...'}</td>
                         </tr>
                         <tr>
-                            <td><img src={dogecoinIcon} alt="Dogecoin icon" style={{ width: '32px', height: '32px' }} /> Dogecoin (DOGE)</td>
+                            <td><img src={dogecoinIcon} alt="Dogecoin icon" /> Dogecoin (DOGE)</td>
                             <td>{cryptoPrices.dogecoin ? `$${cryptoPrices.dogecoin}` : 'Ładowanie...'}</td>
                         </tr>
                         <tr>
-                            <td><img src={litecoinIcon} alt="Litecoin icon" style={{ width: '32px', height: '32px' }} /> Litecoin (LTC)</td>
+                            <td><img src={litecoinIcon} alt="Litecoin icon" /> Litecoin (LTC)</td>
                             <td>{cryptoPrices.litecoin ? `$${cryptoPrices.litecoin}` : 'Ładowanie...'}</td>
                         </tr>
                     </tbody>

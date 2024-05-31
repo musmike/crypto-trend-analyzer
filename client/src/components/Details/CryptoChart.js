@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
 import Chart from 'chart.js/auto';
 import 'chartjs-adapter-moment';
 import moment from 'moment';
 
-const CryptoChart = () => {
-
+const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
   const categoryColors = {
     "Gospodarka": "rgb(255, 99, 132)",
     "Popkultura": "rgb(54, 162, 235)",
@@ -19,50 +17,44 @@ const CryptoChart = () => {
   const [binanceCoinData, setBinanceCoinData] = useState([]);
   const [dogecoinData, setDogecoinData] = useState([]);
   const [litecoinData, setLitecoinData] = useState([]);
-  const [eventsData, setEventsData] = useState([]);
+  const [eventsDataState, setEventsDataState] = useState([]);
 
   const chartRef = useRef(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get('http://localhost:8089/app/data');
-        const cryptocurrencies = response.data.cryptocurrencies;
-        const events = response.data.events;
+    if (cryptocurrencyData.length > 0) {
+      const bitcoinPrices = cryptocurrencyData.filter(currency => currency.symbol === 'BTC');
+      const ethereumPrices = cryptocurrencyData.filter(currency => currency.symbol === 'ETH');
+      const binanceCoinPrices = cryptocurrencyData.filter(currency => currency.symbol === 'BNB');
+      const dogecoinPrices = cryptocurrencyData.filter(currency => currency.symbol === 'DOGE');
+      const litecoinPrices = cryptocurrencyData.filter(currency => currency.symbol === 'LTC');
 
-        const bitcoinPrices = cryptocurrencies.filter(currency => currency.symbol === 'BTC');
-        const ethereumPrices = cryptocurrencies.filter(currency => currency.symbol === 'ETH');
-        const binanceCoinPrices = cryptocurrencies.filter(currency => currency.symbol === 'BNB');
-        const dogecoinPrices = cryptocurrencies.filter(currency => currency.symbol === 'DOGE');
-        const litecoinPrices = cryptocurrencies.filter(currency => currency.symbol === 'LTC');
+      const formattedBitcoinData = formatData(bitcoinPrices);
+      const formattedEthereumData = formatData(ethereumPrices);
+      const formattedBinanceCoinData = formatData(binanceCoinPrices);
+      const formattedDogecoinData = formatData(dogecoinPrices);
+      const formattedLitecoinData = formatData(litecoinPrices);
 
-        const formattedBitcoinData = formatData(bitcoinPrices);
-        const formattedEthereumData = formatData(ethereumPrices);
-        const formattedBinanceCoinData = formatData(binanceCoinPrices);
-        const formattedDogecoinData = formatData(dogecoinPrices);
-        const formattedLitecoinData = formatData(litecoinPrices);
-        const formattedEventsData = formatEvents(events);
+      setBitcoinData(formattedBitcoinData);
+      setEthereumData(formattedEthereumData);
+      setBinanceCoinData(formattedBinanceCoinData);
+      setDogecoinData(formattedDogecoinData);
+      setLitecoinData(formattedLitecoinData);
+    }
+  }, [cryptocurrencyData]);
 
-        setBitcoinData(formattedBitcoinData);
-        setEthereumData(formattedEthereumData);
-        setBinanceCoinData(formattedBinanceCoinData);
-        setDogecoinData(formattedDogecoinData);
-        setLitecoinData(formattedLitecoinData);
-        setEventsData(formattedEventsData);
-      }
-      catch (error) {
-        console.error('Error fetching cryptocurrency data:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
+  useEffect(() => {
+    if (eventsData.length > 0) {
+      const formattedEventsData = formatEvents(eventsData);
+      setEventsDataState(formattedEventsData);
+    }
+  }, [eventsData]);
 
   useEffect(() => {
     if (chartRef.current) {
       updateChart();
     }
-  }, [bitcoinData, ethereumData, binanceCoinData, dogecoinData, litecoinData, eventsData]);
+  }, [bitcoinData, ethereumData, binanceCoinData, dogecoinData, litecoinData, eventsDataState]);
 
   const formatData = (data) => {
     return data.map(({ timestamp, value }) => ({
@@ -93,8 +85,8 @@ const CryptoChart = () => {
   
     // Aktualizacja danych dla wydarzeń
     const eventDataset = chart.data.datasets[5];
-    eventDataset.data = eventsData;
-    eventDataset.pointBackgroundColor = eventsData.map(event => event.backgroundColor);
+    eventDataset.data = eventsDataState;
+    eventDataset.pointBackgroundColor = eventsDataState.map(event => event.backgroundColor);
   
     chart.update();
   };
@@ -142,7 +134,7 @@ const CryptoChart = () => {
               fill: false,
             },
             {
-              label: 'Events',
+              label: 'Wydarzenia',
               data: [],
               pointStyle: 'triangle',
               pointRadius: 10,
@@ -189,7 +181,6 @@ const CryptoChart = () => {
       });
     }
   }, []);
-  
 
   return (
     <div>

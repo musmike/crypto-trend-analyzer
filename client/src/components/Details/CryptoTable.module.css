@@ -1,0 +1,57 @@
+.tableContainer {
+  font-family: Arial, sans-serif;
+}
+
+.cryptoTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.cryptoTable th, .cryptoTable td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.cryptoTable th {
+  background-color: #f2f2f2;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+}
+
+.rowsPerPageLabel {
+  margin-right: 10px;
+}
+
+.rowsPerPageSelect {
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.pageNavigation {
+  display: flex;
+  align-items: center;
+}
+
+.navigationButton {
+  padding: 8px 12px;
+  margin-right: 5px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.navigationButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.currentPage {
+  margin: 0 10px;
+}
