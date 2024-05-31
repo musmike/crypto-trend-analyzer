@@ -8,14 +8,6 @@ import styles from './CryptoChart.module.css';
 
 const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
 
-    const categoryColors = {
-        "Gospodarka": "rgb(255, 0, 0)",
-        "Popkultura": "rgb(0, 255, 0)",
-        "Sport": "rgb(0, 0, 255)",
-        "Polityka": "rgb(255, 165, 0)",
-        "Technologia": "rgb(128, 0, 128)"
-    };
-
     const [filteredCryptoData, setFilteredCryptoData] = useState(cryptocurrencyData);
     const [filteredEventsData, setFilteredEventsData] = useState(eventsData);
     const [minDate, setMinDate] = useState(null);
@@ -32,30 +24,46 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
         
         setMinDate(Math.min(...allTimestamps));
         setMaxDate(Math.max(...allTimestamps));
-
+        
     }, [cryptocurrencyData, eventsData]);
 
     useEffect(() => {
         if (minDate && maxDate) {
             const startDate = moment(minDate).add((maxDate - minDate) * (dateRange[0] / 100), 'milliseconds');
             const endDate = moment(minDate).add((maxDate - minDate) * (dateRange[1] / 100), 'milliseconds');
-
+    
             const filteredCrypto = cryptocurrencyData.filter(item => {
                 const itemDate = moment(item.timestamp);
-                return itemDate.isBetween(startDate, endDate);
+                return itemDate.isSameOrAfter(startDate) && itemDate.isSameOrBefore(endDate);
             });
 
+    
+            filteredCrypto.sort((a, b) => {
+                return moment(a.timestamp).valueOf() - moment(b.timestamp).valueOf();
+            });
+    
             const filteredEvents = eventsData.filter(event => {
                 const eventDate = moment(event.timestamp);
-                return eventDate.isBetween(startDate, endDate);
+                return eventDate.isSameOrAfter(startDate) && eventDate.isSameOrBefore(endDate);
             });
-
+    
             setFilteredCryptoData(filteredCrypto);
             setFilteredEventsData(filteredEvents);
         }
     }, [dateRange, minDate, maxDate, cryptocurrencyData, eventsData]);
+    
+
 
     useEffect(() => {
+
+        const categoryColors = {
+            "Gospodarka": "rgb(255, 0, 0)",
+            "Popkultura": "rgb(0, 255, 0)",
+            "Sport": "rgb(0, 0, 255)",
+            "Polityka": "rgb(255, 165, 0)",
+            "Technologia": "rgb(128, 0, 128)"
+        };
+
         if (chartRef.current) {
             const chartInstance = new Chart(chartRef.current, {
                 type: 'line',
@@ -89,6 +97,7 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
                     ]
                 },
                 options: {
+                    responsive: true,
                     scales: {
                         x: {
                             type: 'time',
@@ -99,6 +108,12 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
                                 }
                             },
                         },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Cena (USD)'
+                            },
+                        }
                     },
                     plugins: {
                         legend: {
@@ -119,6 +134,7 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
                             callbacks: {
                                 label: function (context) {
                                     if (context.dataset.label in categoryColors) {
+
                                         const event = filteredEventsData.find(event => event.category === context.dataset.label && moment(event.timestamp).valueOf() === context.parsed.x);
                                         if (event) {
                                             return event.description;
@@ -136,7 +152,7 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
                 chartInstance.destroy();
             };
         }
-    }, [filteredCryptoData, filteredEventsData, categoryColors, mainCrypto, comparisonCrypto]);
+    }, [filteredCryptoData, filteredEventsData, mainCrypto, comparisonCrypto]);
 
     const handleDateChange = (range) => {
         setDateRange(range);
