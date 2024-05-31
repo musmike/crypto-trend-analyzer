@@ -29,9 +29,6 @@ const Details = () => {
     return (
         <div className={styles.details_container}>
 
-
-            <div className={styles.content_container}>
-
                 <div className={styles.chart_container}>
                 <h2>Kształtowanie się wartości kryptowalut w czasie</h2>
                     <CryptoChart cryptocurrencyData={cryptocurrencyData} eventsData={eventsData} />
@@ -40,7 +37,7 @@ const Details = () => {
                 <div className={styles.table_container}>
                     <CryptoTable cryptocurrencyData={cryptocurrencyData} />
                 </div>
-            </div>
+
 
         </div>
     );

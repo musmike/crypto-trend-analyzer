@@ -2,191 +2,187 @@ import React, { useState, useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
 import 'chartjs-adapter-moment';
 import moment from 'moment';
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
+import styles from './CryptoChart.module.css';
 
 const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
-  const categoryColors = {
-    "Gospodarka": "rgb(255, 99, 132)",
-    "Popkultura": "rgb(54, 162, 235)",
-    "Sport": "rgb(75, 192, 192)",
-    "Polityka": "rgb(255, 205, 86)",
-    "Technologia": "rgb(153, 102, 255)"
-  };
 
-  const [bitcoinData, setBitcoinData] = useState([]);
-  const [ethereumData, setEthereumData] = useState([]);
-  const [binanceCoinData, setBinanceCoinData] = useState([]);
-  const [dogecoinData, setDogecoinData] = useState([]);
-  const [litecoinData, setLitecoinData] = useState([]);
-  const [eventsDataState, setEventsDataState] = useState([]);
+    const categoryColors = {
+        "Gospodarka": "rgb(255, 0, 0)",
+        "Popkultura": "rgb(0, 255, 0)",
+        "Sport": "rgb(0, 0, 255)",
+        "Polityka": "rgb(255, 165, 0)",
+        "Technologia": "rgb(128, 0, 128)"
+    };
 
-  const chartRef = useRef(null);
+    const [filteredCryptoData, setFilteredCryptoData] = useState(cryptocurrencyData);
+    const [filteredEventsData, setFilteredEventsData] = useState(eventsData);
+    const [minDate, setMinDate] = useState(null);
+    const [maxDate, setMaxDate] = useState(null);
+    const [dateRange, setDateRange] = useState([0, 100]);
+    const [mainCrypto, setMainCrypto] = useState('BTC');
+    const [comparisonCrypto, setComparisonCrypto] = useState('ETH');
+    const chartRef = useRef(null);
 
-  useEffect(() => {
-    if (cryptocurrencyData.length > 0) {
-      const bitcoinPrices = cryptocurrencyData.filter(currency => currency.symbol === 'BTC');
-      const ethereumPrices = cryptocurrencyData.filter(currency => currency.symbol === 'ETH');
-      const binanceCoinPrices = cryptocurrencyData.filter(currency => currency.symbol === 'BNB');
-      const dogecoinPrices = cryptocurrencyData.filter(currency => currency.symbol === 'DOGE');
-      const litecoinPrices = cryptocurrencyData.filter(currency => currency.symbol === 'LTC');
+    useEffect(() => {
+        const cryptoTimestamps = cryptocurrencyData.map(item => moment(item.timestamp).valueOf());
+        const eventTimestamps = eventsData.map(event => moment(event.timestamp).valueOf());
+        const allTimestamps = [...cryptoTimestamps, ...eventTimestamps];
+        
+        setMinDate(Math.min(...allTimestamps));
+        setMaxDate(Math.max(...allTimestamps));
 
-      const formattedBitcoinData = formatData(bitcoinPrices);
-      const formattedEthereumData = formatData(ethereumPrices);
-      const formattedBinanceCoinData = formatData(binanceCoinPrices);
-      const formattedDogecoinData = formatData(dogecoinPrices);
-      const formattedLitecoinData = formatData(litecoinPrices);
+    }, [cryptocurrencyData, eventsData]);
 
-      setBitcoinData(formattedBitcoinData);
-      setEthereumData(formattedEthereumData);
-      setBinanceCoinData(formattedBinanceCoinData);
-      setDogecoinData(formattedDogecoinData);
-      setLitecoinData(formattedLitecoinData);
-    }
-  }, [cryptocurrencyData]);
+    useEffect(() => {
+        if (minDate && maxDate) {
+            const startDate = moment(minDate).add((maxDate - minDate) * (dateRange[0] / 100), 'milliseconds');
+            const endDate = moment(minDate).add((maxDate - minDate) * (dateRange[1] / 100), 'milliseconds');
 
-  useEffect(() => {
-    if (eventsData.length > 0) {
-      const formattedEventsData = formatEvents(eventsData);
-      setEventsDataState(formattedEventsData);
-    }
-  }, [eventsData]);
+            const filteredCrypto = cryptocurrencyData.filter(item => {
+                const itemDate = moment(item.timestamp);
+                return itemDate.isBetween(startDate, endDate);
+            });
 
-  useEffect(() => {
-    if (chartRef.current) {
-      updateChart();
-    }
-  }, [bitcoinData, ethereumData, binanceCoinData, dogecoinData, litecoinData, eventsDataState]);
+            const filteredEvents = eventsData.filter(event => {
+                const eventDate = moment(event.timestamp);
+                return eventDate.isBetween(startDate, endDate);
+            });
 
-  const formatData = (data) => {
-    return data.map(({ timestamp, value }) => ({
-      x: moment(timestamp).toDate(),
-      y: value,
-    }));
-  };
-
-  const formatEvents = (events) => {
-    return events.map(({ timestamp, description, category }) => ({
-      x: moment(timestamp).toDate(),
-      y: 0,
-      description: description,
-      backgroundColor: categoryColors[category]
-    }));
-  };
-
-  const updateChart = () => {
-    if (!chartRef.current) return;
-  
-    const chart = chartRef.current;
-  
-    chart.data.datasets[0].data = bitcoinData;
-    chart.data.datasets[1].data = ethereumData;
-    chart.data.datasets[2].data = binanceCoinData;
-    chart.data.datasets[3].data = dogecoinData;
-    chart.data.datasets[4].data = litecoinData;
-  
-    // Aktualizacja danych dla wydarzeń
-    const eventDataset = chart.data.datasets[5];
-    eventDataset.data = eventsDataState;
-    eventDataset.pointBackgroundColor = eventsDataState.map(event => event.backgroundColor);
-  
-    chart.update();
-  };
-
-  useEffect(() => {
-    if (!chartRef.current) {
-      chartRef.current = new Chart(document.getElementById('cryptoChart'), {
-        type: 'line',
-        data: {
-          datasets: [
-            // datasets for cryptocurrencies
-            {
-              label: 'Bitcoin',
-              data: [],
-              borderColor: 'rgb(75, 192, 192)',
-              tension: 0.1,
-              fill: false,
-            },
-            {
-              label: 'Ethereum',
-              data: [],
-              borderColor: 'rgb(255, 99, 132)',
-              tension: 0.1,
-              fill: false,
-            },
-            {
-              label: 'Binance Coin',
-              data: [],
-              borderColor: 'rgb(54, 162, 235)',
-              tension: 0.1,
-              fill: false,
-            },
-            {
-              label: 'Dogecoin',
-              data: [],
-              borderColor: 'rgb(255, 205, 86)',
-              tension: 0.1,
-              fill: false,
-            },
-            {
-              label: 'Litecoin',
-              data: [],
-              borderColor: 'rgb(153, 102, 255)',
-              tension: 0.1,
-              fill: false,
-            },
-            {
-              label: 'Wydarzenia',
-              data: [],
-              pointStyle: 'triangle',
-              pointRadius: 10,
-              tension: 0,
-              fill: false,
-              showLine: false,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            x: {
-              type: 'time',
-              time: {
-                unit: 'month',
-                displayFormats: {
-                  month: 'DD.MM.YYYY'
-                }
-              },
-            },
-            y: {
-              title: {
-                display: true,
-                text: 'Cena (USD)'
-              },
-            }
-          },
-          plugins: {
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  if (context.dataset.label === 'Events') {
-                    return context.raw.description;
-                  } else {
-                    return `${context.dataset.label}: ${context.raw.y}`;
-                  }
-                }
-              }
-            }
-          }
+            setFilteredCryptoData(filteredCrypto);
+            setFilteredEventsData(filteredEvents);
         }
-      });
-    }
-  }, []);
+    }, [dateRange, minDate, maxDate, cryptocurrencyData, eventsData]);
 
-  return (
-    <div>
-      <canvas id="cryptoChart" width="800" height="400"></canvas>
-    </div>
-  );
+    useEffect(() => {
+        if (chartRef.current) {
+            const chartInstance = new Chart(chartRef.current, {
+                type: 'line',
+                data: {
+                    datasets: [
+                        {
+                            label: mainCrypto,
+                            data: filteredCryptoData.filter(item => item.symbol === mainCrypto).map(item => ({ x: item.timestamp, y: item.value })),
+                            borderColor: 'rgb(255, 99, 132)',
+                            fill: false,
+                        },
+                        {
+                            label: comparisonCrypto,
+                            data: filteredCryptoData.filter(item => item.symbol === comparisonCrypto).map(item => ({ x: item.timestamp, y: item.value })),
+                            borderColor: 'rgb(54, 162, 235)',
+                            fill: false,
+                        },
+                        ...Object.entries(categoryColors).map(([category, color]) => ({
+                            label: category,
+                            data: filteredEventsData
+                              .filter(event => event.category === category)
+                              .map(event => ({ x: event.timestamp.valueOf(), y: 0 })),
+                            borderColor: 'transparent',
+                            pointStyle: 'triangle',
+                            pointRadius: 10,
+                            pointRotation: 0, 
+                            pointBorderColor: color,
+                            pointBackgroundColor: color,
+                            fill: false,
+                        }))
+                    ]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'month',
+                                displayFormats: {
+                                    month: 'DD.MM.YYYY'
+                                }
+                            },
+                        },
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                generateLabels: function (chart) {
+                                    const labels = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                                    labels.forEach(label => {
+                                        if (label.text && categoryColors[label.text]) {
+                                            label.fillStyle = categoryColors[label.text];
+                                        }
+                                    });
+                                    return labels;
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    if (context.dataset.label in categoryColors) {
+                                        const event = filteredEventsData.find(event => event.category === context.dataset.label && moment(event.timestamp).valueOf() === context.parsed.x);
+                                        if (event) {
+                                            return event.description;
+                                        }
+                                    }
+                                    return `${context.dataset.label}: ${context.raw.y}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            return () => {
+                chartInstance.destroy();
+            };
+        }
+    }, [filteredCryptoData, filteredEventsData, categoryColors, mainCrypto, comparisonCrypto]);
+
+    const handleDateChange = (range) => {
+        setDateRange(range);
+    };
+
+    const handleMainCryptoChange = (e) => {
+        setMainCrypto(e.target.value);
+    };
+
+    const handleComparisonCryptoChange = (e) => {
+        setComparisonCrypto(e.target.value);
+    };
+
+    return (
+        <div className={styles.cryptoChartContainer}>
+            <div className={styles.selectContainer}>
+                <label>Pierwsza kryptowaluta: </label>
+                <select className={styles.select} value={mainCrypto} onChange={handleMainCryptoChange}>
+                    {['BTC', 'ETH', 'BNB', 'DOGE', 'LTC'].map((crypto) => (
+                        <option key={crypto} value={crypto}>{crypto}</option>
+                    ))}
+                </select>
+            </div>
+            <div className={styles.selectContainer}>
+                <label>Druga kryptowaluta: </label>
+                <select className={styles.select} value={comparisonCrypto} onChange={handleComparisonCryptoChange}>
+                    {['BTC', 'ETH', 'BNB', 'DOGE', 'LTC'].map((crypto) => (
+                        <option key={crypto} value={crypto}>{crypto}</option>
+                    ))}
+                </select>
+            </div>
+
+            <canvas ref={chartRef} className={styles.chartCanvas} />
+
+            <div>
+                <Slider
+                    range
+                    min={0}
+                    max={100}
+                    defaultValue={[0, 100]}
+                    onChange={handleDateChange}
+                    className={styles.slider}
+                />
+            </div>
+        </div>
+    );
 };
 
 export default CryptoChart;

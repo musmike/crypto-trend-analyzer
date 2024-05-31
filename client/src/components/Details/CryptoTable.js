@@ -4,6 +4,7 @@ import styles from './CryptoTable.module.css';
 const CryptoTable = ({ cryptocurrencyData }) => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageNumberInput, setPageNumberInput] = useState('');
 
   const cryptocurrencies = Array.from(new Set(cryptocurrencyData.map(data => data.symbol)));
   const timestamps = Array.from(new Set(cryptocurrencyData.map(data => data.timestamp)));
@@ -11,11 +12,15 @@ const CryptoTable = ({ cryptocurrencyData }) => {
 
   const getPrice = (symbol, timestamp) => {
     const data = cryptocurrencyData.find(item => item.symbol === symbol && item.timestamp === timestamp);
-    return data ? data.value : null;
+    return data ? `$${data.value}` : null;
   };
 
-  const handleChangePage = (pageNumber) => {
-    setCurrentPage(pageNumber);
+  const handleChangePage = () => {
+    const pageNumber = parseInt(pageNumberInput);
+    if (pageNumber >= 1 && pageNumber <= Math.ceil(timestamps.length / rowsPerPage)) {
+      setCurrentPage(pageNumber);
+    }
+    setPageNumberInput('');
   };
 
   return (
@@ -23,9 +28,9 @@ const CryptoTable = ({ cryptocurrencyData }) => {
       <table className={styles.cryptoTable}>
         <thead>
           <tr>
-            <th>Timestamp</th>
+            <th>Data</th>
             {cryptocurrencies.map(crypto => (
-              <th key={crypto}>{crypto}</th>
+              <th key={crypto}>{crypto} ({cryptocurrencyData.find(data => data.symbol === crypto).name})</th>
             ))}
           </tr>
         </thead>
@@ -42,7 +47,7 @@ const CryptoTable = ({ cryptocurrencyData }) => {
       </table>
       <div className={styles.pagination}>
         <label className={styles.rowsPerPageLabel}>
-          Rows per page:{' '}
+          Wierszy na stronę:{' '}
           <select value={rowsPerPage} onChange={(e) => setRowsPerPage(parseInt(e.target.value))} className={styles.rowsPerPageSelect}>
             <option value={10}>10</option>
             <option value={30}>30</option>
@@ -50,9 +55,16 @@ const CryptoTable = ({ cryptocurrencyData }) => {
           </select>
         </label>
         <div className={styles.pageNavigation}>
-          <button disabled={currentPage === 1} onClick={() => handleChangePage(currentPage - 1)} className={styles.navigationButton}>Previous</button>
-          <span className={styles.currentPage}>{currentPage}</span>
-          <button disabled={currentPage * rowsPerPage >= timestamps.length} onClick={() => handleChangePage(currentPage + 1)} className={styles.navigationButton}>Next</button>
+          <button disabled={currentPage === 1} onClick={() => handleChangePage(currentPage - 1)} className={styles.navigationButton}>Poprzednia</button>
+          <button disabled={currentPage * rowsPerPage >= timestamps.length} onClick={() => handleChangePage(currentPage + 1)} className={styles.navigationButton}>Następna</button>
+          <input
+            type="number"
+            value={pageNumberInput}
+            onChange={(e) => setPageNumberInput(e.target.value)}
+            className={styles.pageNumberInput}
+            placeholder={`Strona ${currentPage} z ${Math.ceil(timestamps.length / rowsPerPage)}`}
+          />
+          <button onClick={handleChangePage} className={styles.goToPageButton}>Idź</button>
         </div>
       </div>
     </div>

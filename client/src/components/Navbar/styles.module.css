@@ -29,11 +29,11 @@
     background-color: #0b3e6d;
     border: none;
     cursor: pointer;
-    flex-grow: 1;
     max-width: 200px;
     text-overflow: ellipsis; 
     white-space: nowrap; 
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .navLink:hover {
