@@ -15,12 +15,10 @@ const CryptoTable = ({ cryptocurrencyData }) => {
     return data ? `$${data.value}` : null;
   };
 
-  const handleChangePage = () => {
-    const pageNumber = parseInt(pageNumberInput);
+  const handleChangePage = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= Math.ceil(timestamps.length / rowsPerPage)) {
       setCurrentPage(pageNumber);
     }
-    setPageNumberInput('');
   };
 
   return (
@@ -60,11 +58,19 @@ const CryptoTable = ({ cryptocurrencyData }) => {
           <input
             type="number"
             value={pageNumberInput}
-            onChange={(e) => setPageNumberInput(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              const regex = /^[0-9]+$/;
+              if (value.match(regex)) {
+                setPageNumberInput(value);
+              } else {
+                setPageNumberInput('');
+              }
+            }}
             className={styles.pageNumberInput}
             placeholder={`Strona ${currentPage} z ${Math.ceil(timestamps.length / rowsPerPage)}`}
           />
-          <button onClick={handleChangePage} className={styles.goToPageButton}>Idź</button>
+          <button onClick={() => handleChangePage(parseInt(pageNumberInput))} className={styles.goToPageButton}>Idź</button>
         </div>
       </div>
     </div>

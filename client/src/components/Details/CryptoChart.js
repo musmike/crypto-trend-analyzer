@@ -57,12 +57,21 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
     useEffect(() => {
 
         const categoryColors = {
-            "Gospodarka": "rgb(255, 0, 0)",
-            "Popkultura": "rgb(0, 255, 0)",
-            "Sport": "rgb(0, 0, 255)",
-            "Polityka": "rgb(255, 165, 0)",
-            "Technologia": "rgb(128, 0, 128)"
+            "Gospodarka": "rgb(255, 0, 0)", // Czerwony
+            "Popkultura": "rgb(0, 128, 0)", // Zielony
+            "Sport": "rgb(0, 0, 255)", // Niebieski
+            "Polityka": "rgb(255, 165, 0)", // Pomarańczowy
+            "Technologia": "rgb(128, 0, 128)" // Fioletowy
         };
+        
+        const cryptoColors = {
+            "BTC": "rgb(255, 51, 153)", // Różowy
+            "ETH": "rgb(0, 153, 204)", // Jasnoniebieski
+            "BNB": "rgb(204, 0, 204)", // Purpurowy
+            "DOGE": "rgb(255, 102, 0)", // Pomarańczowy
+            "LTC": "rgb(102, 51, 0)" // Brązowy
+        };
+        
 
         if (chartRef.current) {
             const chartInstance = new Chart(chartRef.current, {
@@ -72,13 +81,13 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
                         {
                             label: mainCrypto,
                             data: filteredCryptoData.filter(item => item.symbol === mainCrypto).map(item => ({ x: item.timestamp, y: item.value })),
-                            borderColor: 'rgb(255, 99, 132)',
+                            borderColor: cryptoColors[mainCrypto],
                             fill: false,
                         },
                         {
                             label: comparisonCrypto,
                             data: filteredCryptoData.filter(item => item.symbol === comparisonCrypto).map(item => ({ x: item.timestamp, y: item.value })),
-                            borderColor: 'rgb(54, 162, 235)',
+                            borderColor: cryptoColors[comparisonCrypto],
                             fill: false,
                         },
                         ...Object.entries(categoryColors).map(([category, color]) => ({
