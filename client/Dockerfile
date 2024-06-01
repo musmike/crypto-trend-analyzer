@@ -24,8 +24,8 @@ FROM nginx:alpine
 # do katalogu publicznego serwera Nginx
 COPY --from=build /app/build /usr/share/nginx/html
 
-# Wyksponowanie portu 8095
-EXPOSE 8095
+# Wyksponowanie portu 80
+EXPOSE 80
 
 # Uuchomienie serwera Nginx w tle
 CMD ["nginx", "-g", "daemon off;"]

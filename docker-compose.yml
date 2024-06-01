@@ -4,40 +4,32 @@ services:
   web:
     container_name: react_server
     build: ./client
-    restart: always
     ports:
-      - "80:3000"
+      - "8090:80"
     networks:
       - frontend
-      - backend
-    # depends_on:
-    #   - app
-    #   - db
+      # - backend
+    restart: always
   
-  # app:
-  #   container_name: rest-server
-  #   build: ./rest-api
-  #   restart: always
-  #   ports:
-  #     - "8000:80"
-  #   networks:
-  #     - frontend
-  #     - backend
-  #   depends_on:
-  #     - db
+# app:
+#   container_name: rest-server
+#   build: ./rest-api
+#   restart: always
+#   ports:
+#     - "8089:80"
+#   networks:
+#     - backend
+#   depends_on:
+#     - db
 
-  # db:
-  #   container_name: database_server
-  #   build: ./mongodb
-  #   restart: always
-  #   ports:
-  #     - "8000:80"
-  #   networks:
-  #     - backend
-  #   # volumes:
-  #   #   - ./database:
-
+# db:
+#   container_name: database_server
+#   build: ./mongodb
+#   restart: always
+#   ports:
+#     - "27017:27017"
+#   networks:
+#     - backend
 
 networks:
- - frontend
- - backend
+  frontend:
