@@ -73,12 +73,7 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
             "LTC": "rgb(102, 51, 0)" // Brązowy
         };
 
-        const averageValue = filteredCryptoData.filter(item => item.symbol === mainCrypto || item.symbol === comparisonCrypto)
-        .reduce((acc, current) => acc + current.value, 0)
-        / filteredCryptoData.filter(item => item.symbol === mainCrypto || item.symbol === comparisonCrypto).length;
-
         const minValue = Math.min(...filteredCryptoData.filter(item => item.symbol === mainCrypto || item.symbol === comparisonCrypto).map(item => item.value));
-        const maxValue = Math.max(...filteredCryptoData.filter(item => item.symbol === mainCrypto || item.symbol === comparisonCrypto).map(item => item.value));
 
         if (chartRef.current) {
             const chartInstance = new Chart(chartRef.current, {
