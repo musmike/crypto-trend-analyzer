@@ -2,34 +2,45 @@ version: '3.7'
 
 services:
   web:
-    container_name: react_server
+    container_name: web_server
     build: ./client
     ports:
       - "8090:80"
     networks:
       - frontend
       # - backend
+      # depends_on:
+      #  - db
+      #  - app
     restart: always
-  
-# app:
-#   container_name: rest-server
-#   build: ./rest-api
-#   restart: always
-#   ports:
-#     - "8089:80"
-#   networks:
-#     - backend
-#   depends_on:
-#     - db
 
-# db:
-#   container_name: database_server
-#   build: ./mongodb
-#   restart: always
-#   ports:
-#     - "27017:27017"
-#   networks:
-#     - backend
+api:
+  container_name: rest-server
+  build: ./rest-api
+  restart: always
+  ports:
+    - "8089:80"
+  networks:
+    - backend
+  environment:
+    - ASPNETCORE_ENVIRONMENT=Development
+  depends_on:
+    - db
+
+db:
+  container_name: database_server
+  build: ./mongodb
+  ports:
+    - "27017:27017"
+  networks:
+    - backend
+  volumes:
+    - db_dumps:/data/db
+  restart: always
 
 networks:
+  backend:
   frontend:
+
+volumes:
+  db_dumps:
