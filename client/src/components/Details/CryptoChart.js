@@ -15,43 +15,44 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
     const [dateRange, setDateRange] = useState([0, 100]);
     const [mainCrypto, setMainCrypto] = useState('BTC');
     const [comparisonCrypto, setComparisonCrypto] = useState('ETH');
+    const [logarithmicScale, setLogarithmicScale] = useState(false);
     const chartRef = useRef(null);
 
     useEffect(() => {
         const cryptoTimestamps = cryptocurrencyData.map(item => moment(item.timestamp).valueOf());
         const eventTimestamps = eventsData.map(event => moment(event.timestamp).valueOf());
         const allTimestamps = [...cryptoTimestamps, ...eventTimestamps];
-        
+
         setMinDate(Math.min(...allTimestamps));
         setMaxDate(Math.max(...allTimestamps));
-        
+
     }, [cryptocurrencyData, eventsData]);
 
     useEffect(() => {
         if (minDate && maxDate) {
             const startDate = moment(minDate).add((maxDate - minDate) * (dateRange[0] / 100), 'milliseconds');
             const endDate = moment(minDate).add((maxDate - minDate) * (dateRange[1] / 100), 'milliseconds');
-    
+
             const filteredCrypto = cryptocurrencyData.filter(item => {
                 const itemDate = moment(item.timestamp);
                 return itemDate.isSameOrAfter(startDate) && itemDate.isSameOrBefore(endDate);
             });
 
-    
+
             filteredCrypto.sort((a, b) => {
                 return moment(a.timestamp).valueOf() - moment(b.timestamp).valueOf();
             });
-    
+
             const filteredEvents = eventsData.filter(event => {
                 const eventDate = moment(event.timestamp);
                 return eventDate.isSameOrAfter(startDate) && eventDate.isSameOrBefore(endDate);
             });
-    
+
             setFilteredCryptoData(filteredCrypto);
             setFilteredEventsData(filteredEvents);
         }
     }, [dateRange, minDate, maxDate, cryptocurrencyData, eventsData]);
-    
+
 
 
     useEffect(() => {
@@ -63,7 +64,7 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
             "Polityka": "rgb(255, 165, 0)", // Pomarańczowy
             "Technologia": "rgb(128, 0, 128)" // Fioletowy
         };
-        
+
         const cryptoColors = {
             "BTC": "rgb(255, 51, 153)", // Różowy
             "ETH": "rgb(0, 153, 204)", // Jasnoniebieski
@@ -71,7 +72,7 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
             "DOGE": "rgb(255, 102, 0)", // Pomarańczowy
             "LTC": "rgb(102, 51, 0)" // Brązowy
         };
-        
+
 
         if (chartRef.current) {
             const chartInstance = new Chart(chartRef.current, {
@@ -93,12 +94,12 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
                         ...Object.entries(categoryColors).map(([category, color]) => ({
                             label: category,
                             data: filteredEventsData
-                              .filter(event => event.category === category)
-                              .map(event => ({ x: event.timestamp.valueOf(), y: 0 })),
+                                .filter(event => event.category === category)
+                                .map(event => ({ x: event.timestamp.valueOf(), y: 0 })),
                             borderColor: 'transparent',
                             pointStyle: 'triangle',
                             pointRadius: 10,
-                            pointRotation: 0, 
+                            pointRotation: 0,
                             pointBorderColor: color,
                             pointBackgroundColor: color,
                             fill: false,
@@ -118,10 +119,17 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
                             },
                         },
                         y: {
+                            type: logarithmicScale ? 'logarithmic' : 'linear',
+                            exponent: logarithmicScale ? 1 : 0,
                             title: {
                                 display: true,
                                 text: 'Cena (USD)'
                             },
+                            ticks: {
+                                callback: function (value) {
+                                    return value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+                                }
+                            }
                         }
                     },
                     plugins: {
@@ -161,7 +169,7 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
                 chartInstance.destroy();
             };
         }
-    }, [filteredCryptoData, filteredEventsData, mainCrypto, comparisonCrypto]);
+    }, [filteredCryptoData, filteredEventsData, mainCrypto, comparisonCrypto, logarithmicScale]);
 
     const handleDateChange = (range) => {
         setDateRange(range);
@@ -173,6 +181,10 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
 
     const handleComparisonCryptoChange = (e) => {
         setComparisonCrypto(e.target.value);
+    };
+
+    const handleScaleChange = () => {
+        setLogarithmicScale(!logarithmicScale);
     };
 
     return (
@@ -192,6 +204,12 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
                         <option key={crypto} value={crypto}>{crypto}</option>
                     ))}
                 </select>
+            </div>
+
+            <div>
+                <button className={styles.selectContainer} onClick={handleScaleChange}>
+                    {logarithmicScale ? 'Skala linowa' : 'Skala logarytmiczna'}
+                </button>
             </div>
 
             <canvas ref={chartRef} className={styles.chartCanvas} />

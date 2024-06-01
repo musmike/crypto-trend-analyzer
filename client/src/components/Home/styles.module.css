@@ -1,4 +1,4 @@
-.home_container {
+.content_container {
     display: flex;
     flex-direction: column;
     max-width: 900px;
@@ -38,7 +38,7 @@
 
 
 @media screen and (min-width: 768px) {
-    .home_container {
+    .content_container {
         flex-direction: row; 
     }
 

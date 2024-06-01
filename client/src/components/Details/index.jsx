@@ -50,30 +50,43 @@ const Details = () => {
 
     return (
         <div className={styles.details_container}>
-
+    
             <div className={styles.content_container}>
-
+    
                 <div className={styles.button_container}>
                     <button onClick={fetchData} className={styles.refresh_button}>Odśwież dane</button>
                 </div>
-
+    
                 <div className={styles.chart_container}>
                     <h2>Kształtowanie się wartości kryptowalut w czasie</h2>
-                    <CryptoChart cryptocurrencyData={cryptocurrencyData} eventsData={eventsData} />
+                    {cryptocurrencyData.length > 0 && eventsData.length > 0 ? (
+                        <CryptoChart cryptocurrencyData={cryptocurrencyData} eventsData={eventsData} />
+                    ) : (
+                        <p>Brak danych do wyświetlenia</p>
+                    )}
                 </div>
-
+    
                 <div className={styles.table_container}>
-                    <CryptoTable cryptocurrencyData={cryptocurrencyData} />
+                    {cryptocurrencyData.length > 0 ? (
+                        <CryptoTable cryptocurrencyData={cryptocurrencyData} />
+                    ) : (
+                        <p>Brak danych do wyświetlenia</p>
+                    )}
                 </div>
-
+    
                 <div className={styles.event_influence_tables_container}>
-                    <EventInfluenceTables cryptocurrencyData={cryptocurrencyData} eventsData={eventsData} />
+                    {cryptocurrencyData.length > 0 && eventsData.length > 0 ? (
+                        <EventInfluenceTables cryptocurrencyData={cryptocurrencyData} eventsData={eventsData} />
+                    ) : (
+                        <p>Brak danych do wyświetlenia</p>
+                    )}
                 </div>
-
+    
             </div>
-
+    
         </div>
     );
+    
 };
 
 export default Details;
