@@ -1,5 +1,5 @@
-# Obraz zawierajacy srodowisko Node.js
-FROM node:alpine
+# Obraz bazowy zawierajacy srodowisko Node.js
+FROM node:alpine as build
 
 # Ustawienie katalogu roboczego w kontenerze
 WORKDIR /app
@@ -11,7 +11,23 @@ COPY package-lock.json .
 # Instalacja zależności
 RUN npm install
 
-# Skopiowanie reszty plików
+# Skopiowanie pozostałych plików
 COPY . .
 
-# Uruchomienie
+# Zbudowanie aplikacji React
+RUN npm run build
+
+# Obraz produkcyjny nginx
+FROM nginx:alpine
+
+# Skopiowanie plikow zbudowanego projektu 
+# do katalogu publicznego serwera Nginx
+COPY --from=build /app/build /usr/share/nginx/html
+
+# Wyksponowanie portu 8095
+EXPOSE 8095
+
+# Uuchomienie serwera Nginx w tle
+CMD ["nginx", "-g", "daemon off;"]
+
+
