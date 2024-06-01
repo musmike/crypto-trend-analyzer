@@ -20,6 +20,12 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(data.email)) {
+            setError("Niepoprawny format adresu e-mail.");
+            return;
+        }
+
         try {
             const url = "http://localhost:8089/app/register";
             const { data: res } = await axios.post(url, data);
@@ -65,6 +71,8 @@ const Register = () => {
                             name="username"
                             onChange={handleChange}
                             value={data.username}
+                            minLength={3}
+                            maxLength={20}
                             required
                             className={styles.input}
                         />
@@ -84,6 +92,8 @@ const Register = () => {
                             placeholder="Hasło"
                             name="password"
                             onChange={handleChange}
+                            minLength={6}
+                            maxLength={30}
                             value={data.password}
                             required
                             className={styles.input}
