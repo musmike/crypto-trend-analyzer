@@ -40,7 +40,7 @@ app.post('/app/register', async (req, res) => {
     // Zaszyfruj hasło
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Dodaj użytkownika do bazy danych
+    // Dodaj użytkownika do bazy danych 
     users.push({ username, email, password: hashedPassword });
 
     res.json({ message: 'Rejestracja zakończona pomyślnie' });
