@@ -1,0 +1,86 @@
+.event_influence_tables {
+  text-align: center;
+  margin: 20px;
+}
+
+.event_influence_tables h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.event_influence_tables table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 60px;
+}
+
+.event_influence_tables th,
+.event_influence_tables td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.event_influence_tables th {
+  background-color: #f2f2f2;
+}
+
+.event_influence_tables .event_description {
+  font-weight: bold;
+  max-width: 200px;
+  word-wrap: break-word;
+}
+
+.positive {
+  color: green;
+}
+
+.negative {
+  color: red;
+}
+
+
+.export_button {
+  background-color: #3563b9;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 50px 2px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+
+@media (max-width: 768px) {
+  .event_influence_tables table {
+    font-size: 0.9rem;
+  }
+  
+  .event_influence_tables th,
+  .event_influence_tables td {
+    padding: 6px;
+  }
+
+  .event_influence_tables h2 {
+    font-size: 1.2rem; 
+  }
+}
+
+@media (max-width: 480px) {
+  .event_influence_tables table {
+    font-size: 0.8rem; 
+  }
+  
+  .event_influence_tables th,
+  .event_influence_tables td {
+    padding: 4px; 
+  }
+
+  .event_influence_tables h2 {
+    font-size: 1rem;
+  }
+}

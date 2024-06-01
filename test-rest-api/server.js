@@ -15,6 +15,19 @@ const users = [];
 
 app.use(bodyParser.json());
 
+// Funkcja middleware do autoryzacji tokenem
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (token == null) return res.sendStatus(401);
+
+    jwt.verify(token, 'secret', (err, user) => {
+        if (err) return res.sendStatus(403);
+        req.user = user;
+        next();
+    });
+};
+
 // Endpoint rejestracji
 app.post('/app/register', async (req, res) => {
     const { username, email, password } = req.body;
@@ -50,17 +63,16 @@ app.post('/app/login', async (req, res) => {
         }
         const token = jwt.sign({ username: user.username }, 'secret');
         res.status(200).send({ data: token, message: "logged in successfully" })
-        console.log('asfd')
     } 
     catch (error) {
         res.status(500).send({ message: "Internal Server Error" })
     }
-})
+});
 
 const filePath = 'data.json';
 
 // Obsługa żądania GET dla trasy /app/data
-app.get('/app/data', (req, res) => {
+app.get('/app/data', authenticateToken, (req, res) => {
     // Odczytaj dane z pliku JSON
     fs.readFile(filePath, 'utf8', (err, data) => {
         if (err) {
@@ -80,7 +92,6 @@ app.get('/app/data', (req, res) => {
         }
     });
 });
-
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
