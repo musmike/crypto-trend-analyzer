@@ -73,6 +73,12 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
             "LTC": "rgb(102, 51, 0)" // Brązowy
         };
 
+        const averageValue = filteredCryptoData.filter(item => item.symbol === mainCrypto || item.symbol === comparisonCrypto)
+        .reduce((acc, current) => acc + current.value, 0)
+        / filteredCryptoData.filter(item => item.symbol === mainCrypto || item.symbol === comparisonCrypto).length;
+
+        const minValue = Math.min(...filteredCryptoData.filter(item => item.symbol === mainCrypto || item.symbol === comparisonCrypto).map(item => item.value));
+        const maxValue = Math.max(...filteredCryptoData.filter(item => item.symbol === mainCrypto || item.symbol === comparisonCrypto).map(item => item.value));
 
         if (chartRef.current) {
             const chartInstance = new Chart(chartRef.current, {
@@ -93,17 +99,21 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
                         },
                         ...Object.entries(categoryColors).map(([category, color]) => ({
                             label: category,
-                            data: filteredEventsData
-                                .filter(event => event.category === category)
-                                .map(event => ({ x: event.timestamp.valueOf(), y: 0 })),
+                            data: logarithmicScale ? filteredEventsData
+                              .filter(event => event.category === category)
+                              .map(event => ({ x: event.timestamp.valueOf(), y: 0.3 * minValue})) :
+                              filteredEventsData
+                              .filter(event => event.category === category)
+                              .map(event => ({ x: event.timestamp.valueOf(), y: 0.01 })),
                             borderColor: 'transparent',
-                            pointStyle: 'triangle',
+                            pointStyle: logarithmicScale ? 'line' : 'triangle',
                             pointRadius: 10,
-                            pointRotation: 0,
+                            pointBorderWidth: logarithmicScale ? 5 : 2,
+                            pointRotation: logarithmicScale ? 90 : 0,
                             pointBorderColor: color,
                             pointBackgroundColor: color,
                             fill: false,
-                        }))
+                          }))
                     ]
                 },
                 options: {
@@ -126,6 +136,7 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
                                 text: 'Cena (USD)'
                             },
                             ticks: {
+                                beginAtZero: true,
                                 callback: function (value) {
                                     return value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
                                 }
