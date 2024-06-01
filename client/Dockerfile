@@ -1,7 +1,7 @@
 # Obraz bazowy zawierajacy srodowisko Node.js
 FROM node:alpine as build
 
-# Ustawienie katalogu roboczego w kontenerze
+# Ustawienie katalogu roboczego
 WORKDIR /app
 
 # Skopiowanie plików z zależnościami
@@ -23,6 +23,9 @@ FROM nginx:alpine
 # Skopiowanie plikow zbudowanego projektu 
 # do katalogu publicznego serwera Nginx
 COPY --from=build /app/build /usr/share/nginx/html
+
+# Skopiowanie konfiguracji NGINX
+COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Wyksponowanie portu 80
 EXPOSE 80
