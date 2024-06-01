@@ -1,16 +1,16 @@
 # Wpływ wydarzeń na kursy krypowalut
 
-# Autorzy
+## Autorzy
 Michał Muzyka i Mateusz Niedźwiedź
 
-# Opis
+## Opis
 Projekt ten umożliwia uruchomienie aplikacji internetowej za pomocą narzędzia Docker Compose.
 Aplikacja ta ukazuje kształtowanie się wartości poszczególnych kryptowalut w czasie, z uwzględnieniem 
 wydarzeń jakie miały miejsce, z podziałem na kategorie wydarzeń (np. gospodarka, 
 popkultura itp.). Dzięki niej można analizować siłę oddziaływania poszczególnych wydarzeń i kategorii wydarzeń oraz różnice w trendach pomiędzy kryptowalutami. 
 
 
-# Struktura projektu
+## Struktura projektu
 Aplikacja składa się z 3 usług:
 - frontendu powstałego przy użyciu szkieletu programistycznego React, udostępionego na serwerze Nginx,
 - backendu, rest-api powstałego przy użyciu ASP.NET Core,
@@ -22,10 +22,10 @@ W katalogu client znajduje się też plik konfiguracyjny serwera Nginx.
 Jest też osobny katalog (db_dumps) używany jako wolumen na przechowywanie danych bazy nawet po wyłączeniu kontenera.
 Całość projektu zwieńcza plik docker-compose.yml, który łączy kontenery w jedno środowisko aplikacji.
 
-# Wymagania
+## Wymagania
 Dla uruchomienia aplikacji wymagane jest zainstalowanie Docker Engine i Docker Compose na systemie operacyjnym oraz posiadanie stosunkowo nowej przeglądarki internetowej.
 
-# Instrukcja
+## Instrukcja
 1. Pobierz całe repozytorium.
 2. Przejdź do katalogu głównego projektu, gdzie znajduje się plik docker-compose.yml.
 3. Uruchom polecenie docker-compose up -d (lub docker-compose up -d --build), aby zbudować i uruchomić wszystkie usługi aplikacji.
@@ -33,7 +33,7 @@ Dla uruchomienia aplikacji wymagane jest zainstalowanie Docker Engine i Docker C
 5. W celu skorzystania z analizy danych dotyczących kryptowalut należy się zarejestrować i zalogować na konto.
 6. Po zakończeniu pracy zatrzymaj aplikację poprzez polecenie docker-compose down
 
-# Konfiguracja
+## Konfiguracja
 Konfiguracja projektu jest zawarta w pliku docker-compose.yml. W tym pliku możesz dostosować ustawienia kontenerów takie jak porty, zmienne środowiskowe itp. według swoich potrzeb. Jest to szczególnie ważne, gdy jakiś port używany przez usługi aplikacji jest już zajęty.
 
 
