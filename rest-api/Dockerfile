@@ -1,51 +1,35 @@
-# Obraz bazowy ASP.NET Core Runtime w wersji 6.0
-# do uruchomienia aplikacji
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+# Użycie obrazu bazowego dla .NET SDK do kompilacji aplikacji
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
 
 # Ustawienie katalogu roboczego
 WORKDIR /app
 
-# Ekspozycja portu 80
+# Kopiowanie plików projektu
+COPY *.csproj ./
+
+# Przywrocenie zaleznosci projektu
+RUN dotnet restore
+
+# Kopiowanie pozostałych plikow
+COPY . ./
+
+# Kompilacja aplikacji
+RUN dotnet publish -c Release -o out
+
+
+
+# Użycie obrazu bazowego dla .NET Runtime do uruchomienia aplikacji
+FROM mcr.microsoft.com/dotnet/aspnet:6.0
+
+# Ustawienie katalogu roboczego
+WORKDIR /app
+
+# Skopiowanie skompilowanych plikow z etapu build-env
+COPY --from=build-env /app/out .
+
+# Wyksponowanie portu 80
 EXPOSE 80
 
-
-# Obraz bazowy .NET SDK w wersji 6.0
-# do kompilacji aplikacji
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-
-# Ustawienie katalogu roboczego
-WORKDIR /src
-
-# Skopiowanie pliku projektu
-COPY ["YourApi/YourApi.csproj", "YourApi/"]
-
-# Przywrocenie zaleznosci projektu na podstawie pliku projektu
-RUN dotnet restore "YourApi/YourApi.csproj"
-
-# Kopiowanie pozostałych plikow zrodlowych
-COPY . .
-
-# Ustawienie katalogu roboczego na głowny plik projektu
-WORKDIR "/src/YourApi"
-
-
-
-RUN dotnet build "YourApi.csproj" -c Release -o /app/build
-
-
-FROM build AS publish
-
-
-RUN dotnet publish "YourApi.csproj" -c Release -o /app/publish
-
-
-FROM base AS final
-
-
-WORKDIR /app
-
-
-COPY --from=publish /app/publish .
-
-
-ENTRYPOINT ["dotnet", "YourApi.dll"]
+# Ustawienie punktu wejscia kontenera
+# uruchamiajacego aplikacje poprzez polecenie dotnet 
+ENTRYPOINT ["dotnet", "MyAspNetCoreApp.dll"]

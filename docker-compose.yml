@@ -9,38 +9,38 @@ services:
     networks:
       - frontend
       # - backend
-      # depends_on:
-      #  - db
-      #  - app
+    # depends_on:
+    #  - db
+    #  - api
     restart: always
 
-api:
-  container_name: rest-server
-  build: ./rest-api
-  restart: always
-  ports:
-    - "8089:80"
-  networks:
-    - backend
-  environment:
-    - ASPNETCORE_ENVIRONMENT=Development
-  depends_on:
-    - db
+# api:
+#   container_name: rest-server
+#   build: ./rest-api
+#   restart: always
+#   ports:
+#     - "8089:80"
+#   networks:
+#     - backend
+#   environment:
+#     - ASPNETCORE_ENVIRONMENT=Development
+#   depends_on:
+#     - db
 
-db:
-  container_name: database_server
-  build: ./mongodb
-  ports:
-    - "27017:27017"
-  networks:
-    - backend
-  volumes:
-    - db_dumps:/data/db
-  restart: always
+# db:
+#   container_name: database_server
+#   build: ./mongodb
+#   ports:
+#     - "27017:27017"
+#   networks:
+#     - backend
+#   volumes:
+#     - db_dumps:/data/db
+#   restart: always
 
 networks:
-  backend:
+  # backend:
   frontend:
 
-volumes:
-  db_dumps:
+# volumes:
+#   db_dumps:
