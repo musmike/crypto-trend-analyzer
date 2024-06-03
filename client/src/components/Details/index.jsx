@@ -54,7 +54,7 @@ const Details = () => {
             <div className={styles.content_container}>
     
                 <div className={styles.button_container}>
-                    <button onClick={fetchData} className={styles.refresh_button}>Odśwież dane</button>
+                    <button onClick={fetchData} className={styles.refresh_button}>Odśwież dane 🗘</button>
                 </div>
     
                 <div className={styles.chart_container}>

@@ -64,7 +64,6 @@
 
 @media (max-width: 600px) {
   .cryptoTable th, .cryptoTable td {
-    font-size: 12px;
     padding: 6px;
   }
 }

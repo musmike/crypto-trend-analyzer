@@ -45,10 +45,10 @@ const EventInfluenceTables = ({ cryptocurrencyData, eventsData }) => {
         const formattedChange = change.toFixed(2) + '%';
 
         if (change > 0) {
-            return <span className={styles.positive}>↗ {formattedChange}</span>;
+            return <span className={styles.positive}>↗&nbsp;{formattedChange}</span>;
         } 
         else if (change < 0) {
-            return <span className={styles.negative}>↘ {formattedChange}</span>;
+            return <span className={styles.negative}>↘&nbsp;{formattedChange}</span>;
         } 
         else {
             return formattedChange;
