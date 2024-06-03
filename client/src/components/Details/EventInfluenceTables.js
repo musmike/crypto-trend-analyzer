@@ -22,6 +22,12 @@ const EventInfluenceTables = ({ cryptocurrencyData, eventsData }) => {
         return `${day}-${month}-${year}`;
     };
 
+    const addDays = (date, days) => {
+        const d = new Date(date);
+        d.setDate(d.getDate() + days);
+        return d;
+    };
+
     const addMonths = (date, months) => {
         const d = new Date(date);
         d.setMonth(d.getMonth() + months);
@@ -34,11 +40,25 @@ const EventInfluenceTables = ({ cryptocurrencyData, eventsData }) => {
         return d;
     };
 
+    const formatChange = (change) => {
+        if (change === "-") return "-";
+        const formattedChange = change.toFixed(2) + '%';
+
+        if (change > 0) {
+            return <span className={styles.positive}>↗ {formattedChange}</span>;
+        } 
+        else if (change < 0) {
+            return <span className={styles.negative}>↘ {formattedChange}</span>;
+        } 
+        else {
+            return formattedChange;
+        }
+    };
+
     const generateTableDataForCategory = (category) => {
         const filteredEvents = eventsData.filter(event => event.category === category);
-        filteredEvents.sort((a, b) => {
-            return new Date(a.timestamp) - new Date(b.timestamp);
-        });
+        filteredEvents.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
         const tableData = [];
 
         filteredEvents.forEach(event => {
@@ -61,59 +81,71 @@ const EventInfluenceTables = ({ cryptocurrencyData, eventsData }) => {
                     const cryptoSymbol = key;
                     const priceOnEventDate = getCryptoPriceOnDate(cryptoSymbol, event.timestamp);
                     
+                    row[key].changeYearBefore = '-';
+                    row[key].changeMonthBefore = '-';
+                    row[key].change7DaysBefore = '-';
+                    row[key].change1DayBefore = '-';
                     row[key].priceOnEventDate = priceOnEventDate ? `$${priceOnEventDate}` : '-';
-                    row[key].change1Day = '-';
-                    row[key].change7Days = '-';
-                    row[key].changeMonth = '-';
-                    row[key].changeYear = '-';
+                    row[key].changeAfter1Day = '-';
+                    row[key].changeAfter7Days = '-';
+                    row[key].changeAfterMonth = '-';
+                    row[key].changeAfterYear = '-';
 
-                    if (priceOnEventDate !== null) {
-                        const priceAfter1Day = getCryptoPriceOnDate(cryptoSymbol, 
-                            new Date(eventDate.getTime() + 1 * 24 * 60 * 60 * 1000));
-                        if (priceAfter1Day !== null) {
-                            const change1Day = calculatePercentageChange(priceOnEventDate, priceAfter1Day);
-                            row[key].change1Day = formatChange(change1Day);
+                    if (priceOnEventDate !== null && priceOnEventDate !== 0) {
+                        const priceYearBefore = getCryptoPriceOnDate(cryptoSymbol, addYears(eventDate, -1));
+                        if (priceYearBefore !== null && priceYearBefore !== 0) {
+                            const changeYearBefore = calculatePercentageChange(priceYearBefore, priceOnEventDate);
+                            row[key].changeYearBefore = formatChange(changeYearBefore);
                         }
-    
-                        const priceAfter7Days = getCryptoPriceOnDate(cryptoSymbol, 
-                            new Date(eventDate.getTime() + 7 * 24 * 60 * 60 * 1000));
-                        if (priceAfter7Days !== null) {
-                            const change7Days = calculatePercentageChange(priceOnEventDate, priceAfter7Days);
-                            row[key].change7Days = formatChange(change7Days);
+                    
+                        const priceMonthBefore = getCryptoPriceOnDate(cryptoSymbol, addMonths(eventDate, -1));
+                        if (priceMonthBefore !== null && priceMonthBefore !== 0) {
+                            const changeMonthBefore = calculatePercentageChange(priceMonthBefore, priceOnEventDate);
+                            row[key].changeMonthBefore = formatChange(changeMonthBefore);
                         }
-    
+                    
+                        const price7DaysBefore = getCryptoPriceOnDate(cryptoSymbol, addDays(eventDate, -7));
+                        if (price7DaysBefore !== null && price7DaysBefore !== 0) {
+                            const change7DaysBefore = calculatePercentageChange(price7DaysBefore, priceOnEventDate);
+                            row[key].change7DaysBefore = formatChange(change7DaysBefore);
+                        }
+                    
+                        const price1DayBefore = getCryptoPriceOnDate(cryptoSymbol, addDays(eventDate, -1));
+                        if (price1DayBefore !== null && price1DayBefore !== 0) {
+                            const change1DayBefore = calculatePercentageChange(price1DayBefore, priceOnEventDate);
+                            row[key].change1DayBefore = formatChange(change1DayBefore);
+                        }
+         
+                        const priceAfter1Day = getCryptoPriceOnDate(cryptoSymbol, addDays(eventDate, 1));
+                        if (priceAfter1Day !== null && priceAfter1Day !== 0) {
+                            const change1DayAfter = calculatePercentageChange(priceOnEventDate, priceAfter1Day);
+                            row[key].changeAfter1Day = formatChange(change1DayAfter);
+                        }
+                    
+                        const priceAfter7Days = getCryptoPriceOnDate(cryptoSymbol, addDays(eventDate, 7));
+                        if (priceAfter7Days !== null && priceAfter7Days !== 0) {
+                            const change7DaysAfter = calculatePercentageChange(priceOnEventDate, priceAfter7Days);
+                            row[key].changeAfter7Days = formatChange(change7DaysAfter);
+                        }
+                    
                         const priceAfterMonth = getCryptoPriceOnDate(cryptoSymbol, addMonths(eventDate, 1));
-                        if (priceAfterMonth !== null) {
-                            const changeMonth = calculatePercentageChange(priceOnEventDate, priceAfterMonth);
-                            row[key].changeMonth = formatChange(changeMonth);
+                        if (priceAfterMonth !== null && priceAfterMonth !== 0) {
+                            const changeMonthAfter = calculatePercentageChange(priceOnEventDate, priceAfterMonth);
+                            row[key].changeAfterMonth = formatChange(changeMonthAfter);
                         }
-    
+                    
                         const priceAfterYear = getCryptoPriceOnDate(cryptoSymbol, addYears(eventDate, 1));
-                        if (priceAfterYear !== null) {
-                            const changeYear = calculatePercentageChange(priceOnEventDate, priceAfterYear);
-                            row[key].changeYear = formatChange(changeYear);
+                        if (priceAfterYear !== null && priceAfterYear !== 0) {
+                            const changeYearAfter = calculatePercentageChange(priceOnEventDate, priceAfterYear);
+                            row[key].changeAfterYear = formatChange(changeYearAfter);
                         }
                     }
                 }
             });
             tableData.push(row);
         });
+
         return tableData;
-    };
-
-    const formatChange = (change) => {
-        if (change === "-") return "-";
-        const formattedChange = change.toFixed(2) + '%';
-
-        if (change > 0) {
-            return <span className={styles.positive}>↗ {formattedChange}</span>;
-        } 
-        else if (change < 0) {
-            return <span className={styles.negative}>↘ {formattedChange}</span>;
-        } 
-        else {
-            return formattedChange;
-        }
     };
 
     const categories = [...new Set(eventsData.map(event => event.category))];
@@ -125,30 +157,43 @@ const EventInfluenceTables = ({ cryptocurrencyData, eventsData }) => {
                 const eventDate = new Date(event.timestamp);
                 const cryptocurrencies = ['BTC', 'ETH', 'BNB', 'DOGE', 'LTC'].map(cryptoSymbol => {
                     const priceOnEventDate = getCryptoPriceOnDate(cryptoSymbol, event.timestamp);
-                    const priceAfter1Day = getCryptoPriceOnDate(cryptoSymbol, 
-                        new Date(eventDate.getTime() + 1 * 24 * 60 * 60 * 1000));
-                    const priceAfter7Days = getCryptoPriceOnDate(cryptoSymbol, 
-                        new Date(eventDate.getTime() + 7 * 24 * 60 * 60 * 1000));
+                    const priceYearBefore = getCryptoPriceOnDate(cryptoSymbol, addYears(eventDate, -1));
+                    const priceMonthBefore = getCryptoPriceOnDate(cryptoSymbol, addMonths(eventDate, -1));
+                    const price7DaysBefore = getCryptoPriceOnDate(cryptoSymbol, addDays(eventDate, -7));
+                    const price1DayBefore = getCryptoPriceOnDate(cryptoSymbol, addDays(eventDate, -1));
+                    const priceAfter1Day = getCryptoPriceOnDate(cryptoSymbol, addDays(eventDate, 1));
+                    const priceAfter7Days = getCryptoPriceOnDate(cryptoSymbol, addDays(eventDate, 7));
                     const priceAfterMonth = getCryptoPriceOnDate(cryptoSymbol, addMonths(eventDate, 1));
                     const priceAfterYear = getCryptoPriceOnDate(cryptoSymbol, addYears(eventDate, 1));
 
                     return {
                         symbol: cryptoSymbol,
+
+                        zmianaRokPrzed: priceOnEventDate !== null && priceYearBefore !== null && priceYearBefore !== 0
+                            ? `${calculatePercentageChange(priceYearBefore, priceOnEventDate).toFixed(2)}%` : '-',
+                        zmianaMiesiacPrzed: priceOnEventDate !== null && priceMonthBefore !== null && priceMonthBefore !== 0
+                            ? `${calculatePercentageChange(priceMonthBefore, priceOnEventDate).toFixed(2)}%` : '-',
+                        zmiana7DniPrzed: priceOnEventDate !== null && price7DaysBefore !== null && price7DaysBefore !== 0 
+                            ? `${calculatePercentageChange(price7DaysBefore, priceOnEventDate).toFixed(2)}%` : '-',
+                        zmiana1DzienPrzed: priceOnEventDate !== null && price1DayBefore !== null && price1DayBefore !== 0
+                            ? `${calculatePercentageChange(price1DayBefore, priceOnEventDate).toFixed(2)}%` : '-',
+
                         wartoscWydarzenie: priceOnEventDate ? `$${priceOnEventDate}` : '-',
-                        zmiana1Dzien: priceOnEventDate !== null && priceAfter1Day !== null 
+
+                        zmianaPo1Dniu: priceOnEventDate !== null && priceAfter1Day !== null && priceOnEventDate !== 0
                             ? `${calculatePercentageChange(priceOnEventDate, priceAfter1Day).toFixed(2)}%` : '-',
-                        zmiana7Dni: priceOnEventDate !== null && priceAfter7Days !== null 
+                        zmianaPo7Dniach: priceOnEventDate !== null && priceAfter7Days !== null && priceOnEventDate !== 0
                             ? `${calculatePercentageChange(priceOnEventDate, priceAfter7Days).toFixed(2)}%` : '-',
-                        zmianaMiesiac: priceOnEventDate !== null && priceAfterMonth !== null 
+                        zmianaPoMiesiacu: priceOnEventDate !== null && priceAfterMonth !== null && priceOnEventDate !== 0
                             ? `${calculatePercentageChange(priceOnEventDate, priceAfterMonth).toFixed(2)}%` : '-',
-                        zmianaRok: priceOnEventDate !== null && priceAfterYear !== null 
+                        zmianaPoRoku: priceOnEventDate !== null && priceAfterYear !== null && priceOnEventDate !== 0
                             ? `${calculatePercentageChange(priceOnEventDate, priceAfterYear).toFixed(2)}%` : '-'
                     };
                 });
 
                 return {
                     opisWydarzenia: event.description,
-                    dataWydarzenia: event.timestamp,
+                    dataWydarzenia: formatDate(event.timestamp),
                     kryptowaluty: cryptocurrencies
                 };
             });
@@ -176,55 +221,57 @@ const EventInfluenceTables = ({ cryptocurrencyData, eventsData }) => {
 
     return (
         <div className={styles.event_influence_tables}>
-
             {categories.map((category, index) => (
                 <div key={index}>
-
                     <h2>Kategoria: {category}</h2>
-
-                    <table>
-
-                        <thead>
-                            <tr>
-                                <th>Wydarzenie</th>
-                                <th>Kryptowaluta</th>
-                                <th>Wartość w dniu wydarzenia</th>
-                                <th>1 dzień %</th>
-                                <th>Tydzień %</th>
-                                <th>Miesiąc %</th>
-                                <th>Rok %</th>
-                            </tr>
-                        </thead>
-                        
-                        <tbody>
-                            {generateTableDataForCategory(category).map((row, rowIndex) => (
-                                <React.Fragment key={rowIndex}>
-                                    <tr>
-                                        <td rowSpan={6} className={styles.event_description}>{row.eventDescription}</td>
-                                    </tr>
-                                    {Object.keys(row).filter(key => key !== 'eventDescription').map((cryptoSymbol, cryptoIndex) => (
-                                        <tr key={cryptoIndex}>
-                                            <td>{cryptoSymbol}</td>
-                                            <td>{row[cryptoSymbol].priceOnEventDate}</td>
-                                            <td>{row[cryptoSymbol].change1Day}</td>
-                                            <td>{row[cryptoSymbol].change7Days}</td>
-                                            <td>{row[cryptoSymbol].changeMonth}</td>
-                                            <td>{row[cryptoSymbol].changeYear}</td>
+                    <div className={styles.table_container}>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Wydarzenie</th>
+                                    <th>Kryptowaluta</th>
+                                    <th>Rok przed %</th>
+                                    <th>Miesiąc przed %</th>
+                                    <th>Tydzień przed %</th>
+                                    <th>Dzień przed %</th>
+                                    <th>Wartość w dniu wydarzenia</th>
+                                    <th>Dzień po %</th>
+                                    <th>Tydzień po %</th>
+                                    <th>Miesiąc po %</th>
+                                    <th>Rok po %</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {generateTableDataForCategory(category).map((row, rowIndex) => (
+                                    <React.Fragment key={rowIndex}>
+                                        <tr>
+                                            <td rowSpan={6} className={styles.event_description}>{row.eventDescription}</td>
                                         </tr>
-                                    ))}
-                                </React.Fragment>
-                            ))}
-                        </tbody>
-
-                    </table>
-
+                                        {Object.keys(row).filter(key => key !== 'eventDescription').map((cryptoSymbol, cryptoIndex) => (
+                                            <tr key={cryptoIndex}>
+                                                <td>{cryptoSymbol}</td>
+                                                <td>{row[cryptoSymbol].changeYearBefore}</td>
+                                                <td>{row[cryptoSymbol].changeMonthBefore}</td>
+                                                <td>{row[cryptoSymbol].change7DaysBefore}</td>
+                                                <td>{row[cryptoSymbol].change1DayBefore}</td>
+                                                <td>{row[cryptoSymbol].priceOnEventDate}</td>
+                                                <td>{row[cryptoSymbol].changeAfter1Day}</td>
+                                                <td>{row[cryptoSymbol].changeAfter7Days}</td>
+                                                <td>{row[cryptoSymbol].changeAfterMonth}</td>
+                                                <td>{row[cryptoSymbol].changeAfterYear}</td>
+                                            </tr>
+                                        ))}
+                                    </React.Fragment>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             ))}
-
             <button className={styles.export_button} onClick={exportData}>Eksportuj dane</button>
-
         </div>
     );
+    
 };
 
 export default EventInfluenceTables;

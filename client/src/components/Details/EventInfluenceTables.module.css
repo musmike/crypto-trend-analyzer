@@ -1,6 +1,6 @@
 .event_influence_tables {
   text-align: center;
-  margin: 20px;
+  margin: 0px;
 }
 
 .event_influence_tables h2 {
@@ -8,10 +8,15 @@
   margin-bottom: 10px;
 }
 
+.table_container {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 60px;
+}
+
 .event_influence_tables table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 60px;
 }
 
 .event_influence_tables th,
@@ -19,6 +24,7 @@
   border: 1px solid #ddd;
   padding: 8px;
   text-align: center;
+  font-size: 0.85rem;
 }
 
 .event_influence_tables th {
@@ -39,21 +45,19 @@
   color: red;
 }
 
-
 .export_button {
   background-color: #3563b9;
   border: none;
   color: white;
-  padding: 20px 40px; 
+  padding: 20px 40px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 20px; 
+  font-size: 20px;
   margin: 50px 2px;
   cursor: pointer;
   border-radius: 5px;
 }
-
 
 @media (max-width: 768px) {
   .event_influence_tables table {
@@ -66,18 +70,18 @@
   }
 
   .event_influence_tables h2 {
-    font-size: 1.2rem; 
+    font-size: 1.2rem;
   }
 }
 
 @media (max-width: 480px) {
   .event_influence_tables table {
-    font-size: 0.8rem; 
+    font-size: 0.8rem;
   }
   
   .event_influence_tables th,
   .event_influence_tables td {
-    padding: 4px; 
+    padding: 4px;
   }
 
   .event_influence_tables h2 {
