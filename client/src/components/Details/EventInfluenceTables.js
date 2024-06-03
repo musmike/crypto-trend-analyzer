@@ -207,7 +207,7 @@ const EventInfluenceTables = ({ cryptocurrencyData, eventsData }) => {
         return exportData;
     };
 
-    const exportData = () => {
+    const handleExportData = () => {
         const data = formatExportData();
         const json = JSON.stringify({ kategorieWydarzen: data }, null, 2);
         const blob = new Blob([json], { type: 'application/json' });
@@ -268,7 +268,7 @@ const EventInfluenceTables = ({ cryptocurrencyData, eventsData }) => {
                     </div>
                 </div>
             ))}
-            <button className={styles.export_button} onClick={exportData}>Eksportuj dane</button>
+            <button className={styles.export_button} onClick={handleExportData}>Eksportuj dane</button>
         </div>
     );
     
