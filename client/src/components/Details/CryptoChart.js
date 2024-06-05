@@ -1,62 +1,56 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Chart from 'chart.js/auto';
 import 'chartjs-adapter-moment';
 import moment from 'moment';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import styles from './CryptoChart.module.css';
+import debounce from 'lodash/debounce';
 
 const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
-
-    const [filteredCryptoData, setFilteredCryptoData] = useState(cryptocurrencyData);
-    const [filteredEventsData, setFilteredEventsData] = useState(eventsData);
-    const [minDate, setMinDate] = useState(null);
-    const [maxDate, setMaxDate] = useState(null);
     const [dateRange, setDateRange] = useState([0, 100]);
     const [mainCrypto, setMainCrypto] = useState('BTC');
     const [comparisonCrypto, setComparisonCrypto] = useState('ETH');
     const [logarithmicScale, setLogarithmicScale] = useState(false);
     const chartRef = useRef(null);
 
-    useEffect(() => {
-        const cryptoTimestamps = cryptocurrencyData.map(item => moment(item.timestamp).valueOf());
-        const eventTimestamps = eventsData.map(event => moment(event.timestamp).valueOf());
-        const allTimestamps = [...cryptoTimestamps, ...eventTimestamps];
-
-        setMinDate(Math.min(...allTimestamps));
-        setMaxDate(Math.max(...allTimestamps));
-
+    const minDate = useMemo(() => {
+        const allTimestamps = [
+            ...cryptocurrencyData.map(item => moment(item.timestamp).valueOf()),
+            ...eventsData.map(event => moment(event.timestamp).valueOf())
+        ];
+        return Math.min(...allTimestamps);
     }, [cryptocurrencyData, eventsData]);
 
-    useEffect(() => {
-        if (minDate && maxDate) {
-            const startDate = moment(minDate).add((maxDate - minDate) * (dateRange[0] / 100), 'milliseconds');
-            const endDate = moment(minDate).add((maxDate - minDate) * (dateRange[1] / 100), 'milliseconds');
+    const maxDate = useMemo(() => {
+        const allTimestamps = [
+            ...cryptocurrencyData.map(item => moment(item.timestamp).valueOf()),
+            ...eventsData.map(event => moment(event.timestamp).valueOf())
+        ];
+        return Math.max(...allTimestamps);
+    }, [cryptocurrencyData, eventsData]);
 
-            const filteredCrypto = cryptocurrencyData.filter(item => {
+    const filteredCryptoData = useMemo(() => {
+        const startDate = moment(minDate).add((maxDate - minDate) * (dateRange[0] / 100), 'milliseconds');
+        const endDate = moment(minDate).add((maxDate - minDate) * (dateRange[1] / 100), 'milliseconds');
+        return cryptocurrencyData
+            .filter(item => {
                 const itemDate = moment(item.timestamp);
                 return itemDate.isSameOrAfter(startDate) && itemDate.isSameOrBefore(endDate);
-            });
+            })
+            .sort((a, b) => moment(a.timestamp).valueOf() - moment(b.timestamp).valueOf());
+    }, [dateRange, minDate, maxDate, cryptocurrencyData]);
 
-
-            filteredCrypto.sort((a, b) => {
-                return moment(a.timestamp).valueOf() - moment(b.timestamp).valueOf();
-            });
-
-            const filteredEvents = eventsData.filter(event => {
-                const eventDate = moment(event.timestamp);
-                return eventDate.isSameOrAfter(startDate) && eventDate.isSameOrBefore(endDate);
-            });
-
-            setFilteredCryptoData(filteredCrypto);
-            setFilteredEventsData(filteredEvents);
-        }
-    }, [dateRange, minDate, maxDate, cryptocurrencyData, eventsData]);
-
-
+    const filteredEventsData = useMemo(() => {
+        const startDate = moment(minDate).add((maxDate - minDate) * (dateRange[0] / 100), 'milliseconds');
+        const endDate = moment(minDate).add((maxDate - minDate) * (dateRange[1] / 100), 'milliseconds');
+        return eventsData.filter(event => {
+            const eventDate = moment(event.timestamp);
+            return eventDate.isSameOrAfter(startDate) && eventDate.isSameOrBefore(endDate);
+        });
+    }, [dateRange, minDate, maxDate, eventsData]);
 
     useEffect(() => {
-
         const categoryColors = {
             "Gospodarka": "rgb(255, 0, 0)", // Czerwony
             "Popkultura": "rgb(0, 128, 0)", // Zielony
@@ -157,7 +151,6 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
                             callbacks: {
                                 label: function (context) {
                                     if (context.dataset.label in categoryColors) {
-
                                         const event = filteredEventsData.find(event => event.category === context.dataset.label && moment(event.timestamp).valueOf() === context.parsed.x);
                                         if (event) {
                                             return event.description;
@@ -177,9 +170,9 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
         }
     }, [filteredCryptoData, filteredEventsData, mainCrypto, comparisonCrypto, logarithmicScale]);
 
-    const handleDateChange = (range) => {
+    const handleDateChange = debounce((range) => {
         setDateRange(range);
-    };
+    }, 300);
 
     const handleMainCryptoChange = (e) => {
         setMainCrypto(e.target.value);
@@ -214,7 +207,7 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
 
             <div>
                 <button className={styles.selectContainer} onClick={handleScaleChange}>
-                    {logarithmicScale ? 'Skala linowa' : 'Skala logarytmiczna'}
+                    {logarithmicScale ? 'Skala liniowa' : 'Skala logarytmiczna'}
                 </button>
             </div>
 
