@@ -16,7 +16,7 @@ Aplikacja składa się z 3 usług:
 - rest-api powstałego przy użyciu ASP.NET Core,
 - nierelacyjnej bazy danych MongoDB
 
-Projekt zawiera katalogi frontendu (client), REST API (rest-api) i bazy danych (mongodb). 
+Projekt zawiera katalogi frontendu (client), backendu (rest-api) i bazy danych (mongodb). 
 W każdym z nich znajduje się plik Dockerfile potrzebny do utworzenia obrazu konkretnej usługi. 
 W katalogu client znajduje się też plik konfiguracyjny serwera Nginx.
 Jest też osobny katalog (db_dumps) używany jako wolumen na przechowywanie danych bazy nawet po wyłączeniu kontenera.
