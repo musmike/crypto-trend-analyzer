@@ -5,7 +5,7 @@ services:
     container_name: web_server
     build: ./client
     ports:
-      - "3000:80"
+      - "3100:80"
     networks:
       - frontend
       - backend
