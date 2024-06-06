@@ -2,6 +2,7 @@
 using MongoDB.Driver;
 using server.DB;
 using server.Models;
+using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -17,7 +18,13 @@ namespace server.Auth {
         }
         
         public async Task<bool> RegisterAsync(User user) {
-            var exist = await _users.Find(u=>u.username == user.username).FirstOrDefaultAsync();
+            var valRes = new List<ValidationResult>();
+            var valCon = new ValidationContext(user, null, null);
+            if(Validator.TryValidateObject(user, valCon, valRes, true)) {
+                var errors = valRes.Select(res=>res.ErrorMessage).ToList();
+                throw new ValidationException(string.Join("; ", errors));
+            }
+            var exist = await _users.Find(u=>u.username == user.username || u.email == user.email).FirstOrDefaultAsync();
             if (exist == null) { 
                 await _users.InsertOneAsync(user);
                 return true;

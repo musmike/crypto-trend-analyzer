@@ -22,5 +22,12 @@ namespace server.Controllers {
 
             return Ok(new {cryptocurrencies, events});
         }
+        [HttpGet("all")]
+        [Authorize]
+        public async Task<IActionResult> GetChartData() {
+            var cryptocurrencies = await _database.GetAllCoins();
+            var events = await _database.GetEvents();
+            return Ok(new { cryptocurrencies, events });
+        }
     }
 }

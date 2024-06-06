@@ -12,6 +12,12 @@ var config = builder.Configuration;
 
 builder.Services.AddSingleton<IDatabase, Database>();
 
+builder.Services.AddCors(options => {
+    options.AddPolicy("AllowAll", builder => {
+        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+    });
+});
+
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<IAuth, Auth>();
@@ -40,6 +46,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+
+
+
+
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();   
 
@@ -51,6 +61,7 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 app.UseRouting();
+app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 

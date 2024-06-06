@@ -20,5 +20,9 @@ namespace server.DB {
         public IMongoCollection<Models.User> GetUsers() { 
             return _database.GetCollection<Models.User>("users");
         }
+        public async Task<IEnumerable<Models.Coin>> GetAllCoins() {
+            var coins = _database.GetCollection<Models.Coin>("coins");
+            return await coins.Find(_ => true).ToListAsync();
+        }
     }
 }
