@@ -15,7 +15,7 @@ namespace server.Controllers {
         }
 
         [HttpGet("{a};{b}")]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult>GetChartData(string a, string b) {
             var cryptocurrencies = await _database.GetCoins(a, b);
             var events = await _database.GetEvents();
