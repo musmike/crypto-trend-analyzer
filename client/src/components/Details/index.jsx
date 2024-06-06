@@ -21,7 +21,7 @@ const Details = () => {
             try {
                 const config = {
                     method: 'get',
-                    url: 'http://localhost:8089/app/data',
+                    url: 'http://localhost:8089/view/LTC;ETH',
                     headers: { 
                         'Content-Type': 'application/json', 
                         'Authorization': `Bearer ${token}` 
