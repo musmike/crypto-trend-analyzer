@@ -1,0 +1,6 @@
+@server_HostAddress = http://localhost:5098
+
+GET {{server_HostAddress}}/view/BNB;BTC
+Accept: application/json
+
+###
