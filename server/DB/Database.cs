@@ -3,10 +3,12 @@
 namespace server.DB {
     public class Database : IDatabase {
         private readonly IMongoDatabase _database;
-        public Database() {
+        private readonly IConfiguration _configuration;
+        public Database(IConfiguration configuration) {
+            _configuration = configuration;
             //var client = new MongoDB.Driver.MongoClient(config);
-            var client = new MongoDB.Driver.MongoClient("mongodb://localhost:27017");
-            _database = client.GetDatabase("coin");
+            var client = new MongoDB.Driver.MongoClient(_configuration["MongoDBSettings:ConnectionString"]);
+            _database = client.GetDatabase(_configuration["MongoDBSettings:DatabaseName"]);
             }
         public async Task<IEnumerable<Models.Coin>>GetCoins(string a, string b) {
             var filter = Builders<Models.Coin>.Filter.In(c => c.coin, new[] { a, b });

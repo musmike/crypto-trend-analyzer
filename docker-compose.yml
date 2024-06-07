@@ -19,7 +19,7 @@ services:
     build: ./server
     restart: always
     ports:
-      - "8089:7100"
+      - "7100:7100"
     networks:
       - backend
     environment:
@@ -31,7 +31,7 @@ services:
     container_name: database_server
     build: ./mongodb
     ports:
-      - "27017:27017"
+      - "27018:27017"
     networks:
       - backend
     volumes:

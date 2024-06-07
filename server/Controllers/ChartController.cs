@@ -4,7 +4,7 @@ using server.DB;
 
 
 namespace server.Controllers {
-    [Authorize]
+    
     [ApiController]
     [Route("view")]
     public class ChartController : Controller {
@@ -28,6 +28,17 @@ namespace server.Controllers {
             var cryptocurrencies = await _database.GetAllCoins();
             var events = await _database.GetEvents();
             return Ok(new { cryptocurrencies, events });
+        }
+
+        [HttpGet("tst")]
+        public async Task<IActionResult> GetTest() {
+            return Ok();
+        }
+
+        [HttpGet("tstdb")]
+        public async Task<IActionResult> GetDBTest() {
+            var test = await _database.GetAllCoins();
+            return Ok();
         }
     }
 }
