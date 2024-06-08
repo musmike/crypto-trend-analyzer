@@ -10,7 +10,7 @@ using BCrypt.Net;
 using MongoDB.Bson;
 
 namespace server.Auth {
-    public class Auth : IAuth {
+    public class Auth : IAuth{
         private readonly IMongoCollection<User> _users;
         private readonly IConfiguration _configuration;
 
@@ -18,20 +18,18 @@ namespace server.Auth {
             _users = database.GetUsers();
             _configuration = configuration;
         }
+        
+        public async Task<bool> RegisterAsync(User user) {
+            var valRes = new List<ValidationResult>();
+            var valCon = new ValidationContext(user, null, null);
 
-        public async Task<bool> RegisterAsync(User user)
-        {
-            var validationResults = new List<ValidationResult>();
-            var validationContext = new ValidationContext(user);
-
-            if (!Validator.TryValidateObject(user, validationContext, validationResults, true))
-            {
-                var errorMessages = validationResults.Select(vr => vr.ErrorMessage);
-                throw new ValidationException(string.Join("; ", errorMessages));
+            if(Validator.TryValidateObject(user, valCon, valRes, true)) {
+                var errors = valRes.Select(res=>res.ErrorMessage).ToList();
+                throw new ValidationException(string.Join("; ", errors));
             }
 
-            var existingUser = await _users.Find(u => u.username == user.username || u.email == user.email).FirstOrDefaultAsync();
-            if (existingUser != null)
+            var exist = await _users.Find(u => u.username == user.username || u.email == user.email).FirstOrDefaultAsync();
+            if (exist != null)
             {
                 throw new ValidationException("Uzytkownik o danej nazwie uzytkownika lub adresie email istnieje!");
             }
