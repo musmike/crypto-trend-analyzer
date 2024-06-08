@@ -21,7 +21,7 @@ const Details = () => {
             try {
                 const config = {
                     method: 'get',
-                    url: 'http://rest-server:8080/view/all',
+                    url: 'http://localhost:8089/view/all',
                     headers: { 
                         'Content-Type': 'application/json', 
                         'Authorization': `Bearer ${token}` 
