@@ -6,6 +6,8 @@ using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using BCrypt.Net;
+using MongoDB.Bson;
 
 namespace server.Auth {
     public class Auth : IAuth{
@@ -20,31 +22,45 @@ namespace server.Auth {
         public async Task<bool> RegisterAsync(User user) {
             var valRes = new List<ValidationResult>();
             var valCon = new ValidationContext(user, null, null);
+
             if(Validator.TryValidateObject(user, valCon, valRes, true)) {
                 var errors = valRes.Select(res=>res.ErrorMessage).ToList();
                 throw new ValidationException(string.Join("; ", errors));
             }
-            var exist = await _users.Find(u=>u.username == user.username || u.email == user.email).FirstOrDefaultAsync();
-            if (exist == null) { 
-                await _users.InsertOneAsync(user);
-                return true;
+
+            var exist = await _users.Find(u => u.username == user.username || u.email == user.email).FirstOrDefaultAsync();
+            if (exist != null)
+            {
+                throw new ValidationException("Uzytkownik o danej nazwie uzytkownika lub adresie email istnieje!");
             }
-            return false;
+
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.password);
+
+            user.password = hashedPassword;
+            user.id = ObjectId.GenerateNewId();
+            await _users.InsertOneAsync(user);
+
+            return true;
         }
 
-        public async Task<string> LoginAsync(User user) {
-            var exist = await _users.Find(u=>u.username == user.username && u.password == user.password).FirstOrDefaultAsync();
-            if (exist == null) {
+        public async Task<string> LoginAsync(LoginUser user)
+        {
+            var exist = await _users.Find(u => u.username == user.username).FirstOrDefaultAsync();
+
+            if (exist == null || !BCrypt.Net.BCrypt.Verify(user.password, exist.password))
+            {
                 return null;
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration["Token:key"]);
-            var tokenDescriptor = new SecurityTokenDescriptor {
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
                 Subject = new ClaimsIdentity(new Claim[]
-        {
-            new Claim(ClaimTypes.Name, exist.username)
-        }),
+                {
+                    new Claim(ClaimTypes.Name, exist.username)
+                }),
                 Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
                 Issuer = _configuration["Token:issuer"],
