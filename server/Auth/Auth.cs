@@ -10,7 +10,7 @@ using BCrypt.Net;
 using MongoDB.Bson;
 
 namespace server.Auth {
-    public class Auth : IAuth{
+    public class Auth : IAuth {
         private readonly IMongoCollection<User> _users;
         private readonly IConfiguration _configuration;
 
@@ -18,18 +18,20 @@ namespace server.Auth {
             _users = database.GetUsers();
             _configuration = configuration;
         }
-        
-        public async Task<bool> RegisterAsync(User user) {
-            var valRes = new List<ValidationResult>();
-            var valCon = new ValidationContext(user, null, null);
 
-            if(Validator.TryValidateObject(user, valCon, valRes, true)) {
-                var errors = valRes.Select(res=>res.ErrorMessage).ToList();
-                throw new ValidationException(string.Join("; ", errors));
+        public async Task<bool> RegisterAsync(User user)
+        {
+            var validationResults = new List<ValidationResult>();
+            var validationContext = new ValidationContext(user);
+
+            if (!Validator.TryValidateObject(user, validationContext, validationResults, true))
+            {
+                var errorMessages = validationResults.Select(vr => vr.ErrorMessage);
+                throw new ValidationException(string.Join("; ", errorMessages));
             }
 
-            var exist = await _users.Find(u => u.username == user.username || u.email == user.email).FirstOrDefaultAsync();
-            if (exist != null)
+            var existingUser = await _users.Find(u => u.username == user.username || u.email == user.email).FirstOrDefaultAsync();
+            if (existingUser != null)
             {
                 throw new ValidationException("Uzytkownik o danej nazwie uzytkownika lub adresie email istnieje!");
             }
@@ -37,7 +39,7 @@ namespace server.Auth {
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.password);
 
             user.password = hashedPassword;
-            
+            user.id = ObjectId.GenerateNewId().ToString();
             await _users.InsertOneAsync(user);
 
             return true;
