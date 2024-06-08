@@ -25,14 +25,21 @@ namespace server.Controllers {
             catch (ValidationException e){
                 return BadRequest(e.Message);
             }
-            }
+        }
+
         [HttpPost("login")]
-        public async Task<IActionResult> Login(User user) {
+        public async Task<IActionResult> Login(LoginUser user) {
             var token = await _auth.LoginAsync(user);
             if (token == null) {
                 return Unauthorized("Invalid credentials");
             }
             return Ok(new { token });
+        }
+
+        [HttpGet("hello")]
+        public async Task<IActionResult> Hello()
+        {
+            return Ok("Hello, World!");
         }
     }
 }

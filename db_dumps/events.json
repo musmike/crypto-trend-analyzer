@@ -1,0 +1,77 @@
+[
+    {
+        "name":"Wystąpienie Elona Muska w SNL",
+        "date":"08.05.2021",
+        "type":"popkultura"
+    },
+    {
+        "name":"Wybory Prezydenckie USA",
+        "date":"03.10.2020",
+        "type":"polityka"
+    },
+    {
+        "name":"Zawieszenie lotów w USA spowodowane pandemią",
+        "date":"12.03.2020",
+        "type":"gospodarka"
+    },
+    {
+        "name":"Premiera drugiej części Avatar",
+        "date":"06.12.2022",
+        "type":"popkultura"
+    },
+    {
+        "name":"Premiera Bored Ape Yacht Club",
+        "date":"30.04.2021",
+        "type":"technologia"
+    },
+    {
+        "name":"Otwarcie XXXII Letnich Igrzysk Olimpijskich",
+        "date":"23.07.2021",
+        "type":"sport"
+    },
+    {
+        "name":"Mundial w Katarze",
+        "date":"20.11.2022",
+        "type":"sport"
+    },
+    {
+        "name":"Mistrzostwa Świata w Piłce Siatkowej mężczyzn",
+        "date":"26.07.2022",
+        "type":"sport"
+    },
+    {
+        "name":"Inwazja Rosji na Ukrainę",
+        "date":"24.02.2022",
+        "type":"polityka"
+    },
+    {
+        "name":"Udostępnienie ChatGPT przez fundację OpenAI",
+        "date":"30.11.2022",
+        "type":"technologia"
+    },
+    {
+        "name":"Początek wojny w strefie Gazy",
+        "date":"07.10.2023",
+        "type":"polityka"
+    },
+    {
+        "name":"Premiera Squid Game",
+        "date":"17.10.2021",
+        "type":"popkultura"
+    },
+    {
+        "name":"Ogłoszenie waluty Libra przez Facebooka",
+        "date":"19.06.2019",
+        "type":"gospodarka"
+    },
+    {
+        "name":"Ogłoszenie dyrektywy DAC8",
+        "date":"17.10.2023",
+        "type":"gospodarka"
+    },
+    {
+        "name":"Premiera Playstation 5",
+        "date":"19.11.2020",
+        "type":"technologia"
+    }
+]
