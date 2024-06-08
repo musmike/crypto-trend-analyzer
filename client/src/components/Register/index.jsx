@@ -27,7 +27,7 @@ const Register = () => {
         }
 
         try {
-            const url = "http://localhost:8089/auth/register";
+            const url = "http://rest-server:8080/auth/register";
             const { data: res } = await axios.post(url, data);
             navigate("/login");
             console.log(res.message);

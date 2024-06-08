@@ -10,9 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 // Add services to the container.
 
-builder.WebHost.ConfigureKestrel(option => {
-    option.ListenAnyIP(7100);
-});
+//builder.WebHost.ConfigureKestrel(option => {
+//    option.ListenAnyIP(7100);
+//});
 
 builder.Services.AddSingleton<IDatabase, Database>();
 

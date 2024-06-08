@@ -19,7 +19,7 @@ const Login = () => {
         e.preventDefault();
 
         try {
-            const url = "http://localhost:8089/auth/login";
+            const url = "http://rest-server:8080/auth/login";
             const { data: res } = await axios.post(url, data);
             localStorage.setItem("token", res.data);
             window.location = "/";
