@@ -11,7 +11,7 @@ var config = builder.Configuration;
 // Add services to the container.
 
 //builder.WebHost.ConfigureKestrel(option => {
-//    option.ListenAnyIP(7100);
+//    option.ListenAnyIP(8080);
 //});
 
 builder.Services.AddSingleton<IDatabase, Database>();

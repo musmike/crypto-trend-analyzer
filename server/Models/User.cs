@@ -1,10 +1,11 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using System.ComponentModel.DataAnnotations;
 
 namespace server.Models {
     public class User {
         [BsonId]
-        public string? id { get; set; }
+        public ObjectId? id { get; set; }
         [BsonElement("username")]
         [StringLength(20, MinimumLength = 4, ErrorMessage ="Invalid Username")]
         public string username { get; set; }
