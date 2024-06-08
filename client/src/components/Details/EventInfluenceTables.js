@@ -4,9 +4,9 @@ import styles from './EventInfluenceTables.module.css';
 const EventInfluenceTables = ({ cryptocurrencyData, eventsData }) => {
 
     const getCryptoPriceOnDate = (cryptocurrencySymbol, date) => {
-        const eventDate = new Date(date).getTime();
-        const crypto = cryptocurrencyData.find(crypto => crypto.symbol === cryptocurrencySymbol 
-            && new Date(crypto.timestamp).getTime() === eventDate);
+        const eventDate = new Date(date).setHours(0, 0, 0, 0); 
+        const crypto = cryptocurrencyData.find(crypto => crypto.coin === cryptocurrencySymbol 
+            && new Date(crypto.date).setHours(0, 0, 0, 0) === eventDate);
         return crypto ? crypto.value : null;
     };
 
@@ -56,17 +56,17 @@ const EventInfluenceTables = ({ cryptocurrencyData, eventsData }) => {
     };
 
     const generateTableDataForCategory = (category) => {
-        const filteredEvents = eventsData.filter(event => event.category === category);
-        filteredEvents.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+        const filteredEvents = eventsData.filter(event => event.type === category);
+        filteredEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
 
         const tableData = [];
 
         filteredEvents.forEach(event => {
-            const eventDate = new Date(event.timestamp);
+            const eventDate = new Date(event.date);
             const row = {
                 eventDescription: (
                     <>
-                        {event.description} <br /> ({formatDate(event.timestamp)})
+                        {event.name} <br /> ({formatDate(event.date)})
                     </>
                 ),
                 BTC: {},
@@ -79,7 +79,7 @@ const EventInfluenceTables = ({ cryptocurrencyData, eventsData }) => {
             Object.keys(row).forEach(key => {
                 if (key !== 'eventDescription') {
                     const cryptoSymbol = key;
-                    const priceOnEventDate = getCryptoPriceOnDate(cryptoSymbol, event.timestamp);
+                    const priceOnEventDate = getCryptoPriceOnDate(cryptoSymbol, event.date);
                     
                     row[key].changeYearBefore = '-';
                     row[key].changeMonthBefore = '-';
@@ -148,15 +148,15 @@ const EventInfluenceTables = ({ cryptocurrencyData, eventsData }) => {
         return tableData;
     };
 
-    const categories = [...new Set(eventsData.map(event => event.category))];
+    const categories = [...new Set(eventsData.map(event => event.type))];
 
     const formatExportData = () => {
-        const categories = [...new Set(eventsData.map(event => event.category))];
+        const categories = [...new Set(eventsData.map(event => event.type))];
         const exportData = categories.map(category => {
-            const events = eventsData.filter(event => event.category === category).map(event => {
-                const eventDate = new Date(event.timestamp);
+            const events = eventsData.filter(event => event.type === category).map(event => {
+                const eventDate = new Date(event.date);
                 const cryptocurrencies = ['BTC', 'ETH', 'BNB', 'DOGE', 'LTC'].map(cryptoSymbol => {
-                    const priceOnEventDate = getCryptoPriceOnDate(cryptoSymbol, event.timestamp);
+                    const priceOnEventDate = getCryptoPriceOnDate(cryptoSymbol, event.date);
                     const priceYearBefore = getCryptoPriceOnDate(cryptoSymbol, addYears(eventDate, -1));
                     const priceMonthBefore = getCryptoPriceOnDate(cryptoSymbol, addMonths(eventDate, -1));
                     const price7DaysBefore = getCryptoPriceOnDate(cryptoSymbol, addDays(eventDate, -7));
@@ -192,8 +192,8 @@ const EventInfluenceTables = ({ cryptocurrencyData, eventsData }) => {
                 });
 
                 return {
-                    opisWydarzenia: event.description,
-                    dataWydarzenia: formatDate(event.timestamp),
+                    opisWydarzenia: event.name,
+                    dataWydarzenia: formatDate(event.date),
                     kryptowaluty: cryptocurrencies
                 };
             });

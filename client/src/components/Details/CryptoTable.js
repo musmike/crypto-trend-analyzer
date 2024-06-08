@@ -2,79 +2,89 @@ import React, { useState } from 'react';
 import styles from './CryptoTable.module.css';
 
 const CryptoTable = ({ cryptocurrencyData }) => {
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageNumberInput, setPageNumberInput] = useState('');
+	const [rowsPerPage, setRowsPerPage] = useState(10);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [pageNumberInput, setPageNumberInput] = useState('');
 
-  const cryptocurrencies = Array.from(new Set(cryptocurrencyData.map(data => data.symbol)));
-  const timestamps = Array.from(new Set(cryptocurrencyData.map(data => data.timestamp)));
-  timestamps.sort((a, b) => new Date(a) - new Date(b));
+	const cryptocurrencies = Array.from(new Set(cryptocurrencyData.map(data => data.coin)));
+	const timestamps = Array.from(new Set(cryptocurrencyData.map(data => data.date)));
+	timestamps.sort((a, b) => new Date(a) - new Date(b));
 
-  const getPrice = (symbol, timestamp) => {
-    const data = cryptocurrencyData.find(item => item.symbol === symbol && item.timestamp === timestamp);
-    return data ? `$${data.value}` : null;
-  };
+	const getPrice = (symbol, timestamp) => {
+		const data = cryptocurrencyData.find(item => item.coin === symbol && item.date === timestamp);
+		return data ? `$${data.value}` : null;
+	};
 
-  const handleChangePage = (pageNumber) => {
-    if (pageNumber >= 1 && pageNumber <= Math.ceil(timestamps.length / rowsPerPage)) {
-      setCurrentPage(pageNumber);
-    }
-  };
+	const handleChangePage = (pageNumber) => {
+		if (pageNumber >= 1 && pageNumber <= Math.ceil(timestamps.length / rowsPerPage)) {
+			setCurrentPage(pageNumber);
+		}
+	};
 
-  return (
-    <div className={styles.tableContainer}>
-      <table className={styles.cryptoTable}>
-        <thead>
-          <tr>
-            <th>Data</th>
-            {cryptocurrencies.map(crypto => (
-              <th key={crypto}>{crypto} ({cryptocurrencyData.find(data => data.symbol === crypto).name})</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {timestamps.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage).map(timestamp => (
-            <tr key={timestamp}>
-              <td>{timestamp}</td>
-              {cryptocurrencies.map(crypto => (
-                <td key={crypto}>{getPrice(crypto, timestamp)}</td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <div className={styles.pagination}>
-        <label className={styles.rowsPerPageLabel}>
-          Wierszy na stronę:{' '}
-          <select value={rowsPerPage} onChange={(e) => setRowsPerPage(parseInt(e.target.value))} className={styles.rowsPerPageSelect}>
-            <option value={10}>10</option>
-            <option value={30}>30</option>
-            <option value={50}>50</option>
-          </select>
-        </label>
-        <div className={styles.pageNavigation}>
-          <button disabled={currentPage === 1} onClick={() => handleChangePage(currentPage - 1)} className={styles.navigationButton}>Poprzednia</button>
-          <button disabled={currentPage * rowsPerPage >= timestamps.length} onClick={() => handleChangePage(currentPage + 1)} className={styles.navigationButton}>Następna</button>
-          <input
-            type="number"
-            value={pageNumberInput}
-            onChange={(e) => {
-              const value = e.target.value;
-              const regex = /^[0-9]+$/;
-              if (value.match(regex)) {
-                setPageNumberInput(value);
-              } else {
-                setPageNumberInput('');
-              }
-            }}
-            className={styles.pageNumberInput}
-            placeholder={`Strona ${currentPage} z ${Math.ceil(timestamps.length / rowsPerPage)}`}
-          />
-          <button onClick={() => handleChangePage(parseInt(pageNumberInput))} className={styles.goToPageButton}>Idź</button>
-        </div>
-      </div>
-    </div>
-  );
+	const fullNames = {
+		BNB: 'Binance Coin',
+		BTC: 'Bitcoin',
+		DOGE: 'Dogecoin',
+		ETH: 'Ethereum',
+		LTC: 'Litecoin'
+	};
+
+	return (
+		<div className={styles.tableContainer}>
+			<table className={styles.cryptoTable}>
+				<thead>
+				<tr>
+						<th>Data</th>
+						{cryptocurrencies.map(crypto => (
+							<th key={crypto}>
+								{crypto} ({fullNames[crypto]})
+							</th>
+						))}
+					</tr>
+				</thead>
+				<tbody>
+					{timestamps.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage).map(timestamp => (
+						<tr key={timestamp}>
+							<td>{timestamp}</td>
+							{cryptocurrencies.map(crypto => (
+								<td key={crypto}>{getPrice(crypto, timestamp)}</td>
+							))}
+						</tr>
+					))}
+				</tbody>
+			</table>
+			<div className={styles.pagination}>
+				<label className={styles.rowsPerPageLabel}>
+					Wierszy na stronę:{' '}
+					<select value={rowsPerPage} onChange={(e) => setRowsPerPage(parseInt(e.target.value))} className={styles.rowsPerPageSelect}>
+						<option value={10}>10</option>
+						<option value={30}>30</option>
+						<option value={50}>50</option>
+					</select>
+				</label>
+				<div className={styles.pageNavigation}>
+					<button disabled={currentPage === 1} onClick={() => handleChangePage(currentPage - 1)} className={styles.navigationButton}>Poprzednia</button>
+					<button disabled={currentPage * rowsPerPage >= timestamps.length} onClick={() => handleChangePage(currentPage + 1)} className={styles.navigationButton}>Następna</button>
+					<input
+						type="number"
+						value={pageNumberInput}
+						onChange={(e) => {
+							const value = e.target.value;
+							const regex = /^[0-9]+$/;
+							if (value.match(regex)) {
+								setPageNumberInput(value);
+							} else {
+								setPageNumberInput('');
+							}
+						}}
+						className={styles.pageNumberInput}
+						placeholder={`Strona ${currentPage} z ${Math.ceil(timestamps.length / rowsPerPage)}`}
+					/>
+					<button onClick={() => handleChangePage(parseInt(pageNumberInput))} className={styles.goToPageButton}>Idź</button>
+				</div>
+			</div>
+		</div>
+	);
 };
 
 export default CryptoTable;

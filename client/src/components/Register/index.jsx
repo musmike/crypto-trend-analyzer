@@ -19,29 +19,26 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(data.email)) {
             setError("Niepoprawny format adresu e-mail.");
             return;
         }
-
+    
         try {
             const url = "http://localhost:8089/auth/register";
             const { data: res } = await axios.post(url, data);
             navigate("/login");
-            console.log(res.message);
-        }
+            console.log(res);
+        } 
         catch (error) {
-            if (
-                error.response &&
-                error.response.status >= 400 &&
-                error.response.status <= 500
-            ) {
-                setError(error.response.data.message);
+            if (error.response && error.response.status >= 400 && error.response.status <= 500) {
+                setError(error.response.data); 
             }
         }
     };
+    
 
     return (
         <div className={styles.signup_container}>

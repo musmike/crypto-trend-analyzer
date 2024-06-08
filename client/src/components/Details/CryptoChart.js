@@ -16,16 +16,16 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
 
     const minDate = useMemo(() => {
         const allTimestamps = [
-            ...cryptocurrencyData.map(item => moment(item.timestamp).valueOf()),
-            ...eventsData.map(event => moment(event.timestamp).valueOf())
+            ...cryptocurrencyData.map(item => moment(item.date).valueOf()),
+            ...eventsData.map(event => moment(event.date).valueOf())
         ];
         return Math.min(...allTimestamps);
     }, [cryptocurrencyData, eventsData]);
 
     const maxDate = useMemo(() => {
         const allTimestamps = [
-            ...cryptocurrencyData.map(item => moment(item.timestamp).valueOf()),
-            ...eventsData.map(event => moment(event.timestamp).valueOf())
+            ...cryptocurrencyData.map(item => moment(item.date).valueOf()),
+            ...eventsData.map(event => moment(event.date).valueOf())
         ];
         return Math.max(...allTimestamps);
     }, [cryptocurrencyData, eventsData]);
@@ -35,17 +35,17 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
         const endDate = moment(minDate).add((maxDate - minDate) * (dateRange[1] / 100), 'milliseconds');
         return cryptocurrencyData
             .filter(item => {
-                const itemDate = moment(item.timestamp);
+                const itemDate = moment(item.date);
                 return itemDate.isSameOrAfter(startDate) && itemDate.isSameOrBefore(endDate);
             })
-            .sort((a, b) => moment(a.timestamp).valueOf() - moment(b.timestamp).valueOf());
+            .sort((a, b) => moment(a.date).valueOf() - moment(b.date).valueOf());
     }, [dateRange, minDate, maxDate, cryptocurrencyData]);
 
     const filteredEventsData = useMemo(() => {
         const startDate = moment(minDate).add((maxDate - minDate) * (dateRange[0] / 100), 'milliseconds');
         const endDate = moment(minDate).add((maxDate - minDate) * (dateRange[1] / 100), 'milliseconds');
         return eventsData.filter(event => {
-            const eventDate = moment(event.timestamp);
+            const eventDate = moment(event.date);
             return eventDate.isSameOrAfter(startDate) && eventDate.isSameOrBefore(endDate);
         });
     }, [dateRange, minDate, maxDate, eventsData]);
@@ -67,33 +67,21 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
             "LTC": "rgb(102, 51, 0)" // Brązowy
         };
 
-        const minValue = Math.min(...filteredCryptoData.filter(item => item.symbol === mainCrypto || item.symbol === comparisonCrypto).map(item => item.value));
+        const minValue = Math.min(...filteredCryptoData.filter(item => item.coin === mainCrypto || item.coin === comparisonCrypto).map(item => item.value));
 
         if (chartRef.current) {
             const chartInstance = new Chart(chartRef.current, {
                 type: 'line',
                 data: {
                     datasets: [
-                        {
-                            label: mainCrypto,
-                            data: filteredCryptoData.filter(item => item.symbol === mainCrypto).map(item => ({ x: item.timestamp, y: item.value })),
-                            borderColor: cryptoColors[mainCrypto],
-                            fill: false,
-                        },
-                        {
-                            label: comparisonCrypto,
-                            data: filteredCryptoData.filter(item => item.symbol === comparisonCrypto).map(item => ({ x: item.timestamp, y: item.value })),
-                            borderColor: cryptoColors[comparisonCrypto],
-                            fill: false,
-                        },
                         ...Object.entries(categoryColors).map(([category, color]) => ({
                             label: category,
                             data: logarithmicScale ? filteredEventsData
-                              .filter(event => event.category === category)
-                              .map(event => ({ x: event.timestamp.valueOf(), y: 0.3 * minValue})) :
+                              .filter(event => event.type === category)
+                              .map(event => ({ x: event.date.valueOf(), y: 0.3 * minValue})) :
                               filteredEventsData
-                              .filter(event => event.category === category)
-                              .map(event => ({ x: event.timestamp.valueOf(), y: 0.01 })),
+                              .filter(event => event.type === category)
+                              .map(event => ({ x: event.date.valueOf(), y: 0.01 })),
                             borderColor: 'transparent',
                             pointStyle: logarithmicScale ? 'line' : 'triangle',
                             pointRadius: 10,
@@ -102,7 +90,21 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
                             pointBorderColor: color,
                             pointBackgroundColor: color,
                             fill: false,
-                          }))
+                          })),
+                        {
+                            label: mainCrypto,
+                            data: filteredCryptoData.filter(item => item.coin === mainCrypto).map(item => ({ x: item.date, y: item.value })),
+                            borderColor: cryptoColors[mainCrypto],
+                            fill: false,
+                            pointRadius: 1
+                        },
+                        {
+                            label: comparisonCrypto,
+                            data: filteredCryptoData.filter(item => item.coin === comparisonCrypto).map(item => ({ x: item.date, y: item.value })),
+                            borderColor: cryptoColors[comparisonCrypto],
+                            fill: false,
+                            pointRadius: 1
+                        }
                     ]
                 },
                 options: {
@@ -151,9 +153,9 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
                             callbacks: {
                                 label: function (context) {
                                     if (context.dataset.label in categoryColors) {
-                                        const event = filteredEventsData.find(event => event.category === context.dataset.label && moment(event.timestamp).valueOf() === context.parsed.x);
+                                        const event = filteredEventsData.find(event => event.type === context.dataset.label && moment(event.date).valueOf() === context.parsed.x);
                                         if (event) {
-                                            return event.description;
+                                            return event.name;
                                         }
                                     }
                                     return `${context.dataset.label}: ${context.raw.y}`;

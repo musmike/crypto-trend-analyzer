@@ -1,18 +1,18 @@
 version: '3.7'
 
 services:
-  client:
-    container_name: web_server
-    build: ./client
-    ports:
-      - "3100:80"
-    networks:
-      - frontend
-      - backend
-    depends_on:
-     - db
-     - server
-    restart: always
+  # client:
+  #   container_name: web_server
+  #   build: ./client
+  #   ports:
+  #     - "3100:80"
+  #   networks:
+  #     - frontend
+  #     - backend
+  #   depends_on:
+  #    - db
+  #    - server
+  #   restart: always
 
   server:
     container_name: rest-server
@@ -40,7 +40,7 @@ services:
 
 networks:
   backend:
-  frontend:
+  # frontend:
 
 volumes:
   db_dumps:

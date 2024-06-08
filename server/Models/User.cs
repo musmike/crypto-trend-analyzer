@@ -12,7 +12,7 @@ namespace server.Models {
         public string username { get; set; }
 
         [BsonElement("email")]
-        [EmailAddress(ErrorMessage = "Niepoprawny email")]
+        [RegularExpression(@"^[^\s@]+@[^\s@]+\.[^\s@]+$", ErrorMessage = "Niepoprawny format adresu email")]
         public string? email { get; set; }
 
         [BsonElement("password")]

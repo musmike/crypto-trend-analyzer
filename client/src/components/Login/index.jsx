@@ -17,23 +17,21 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         try {
             const url = "http://localhost:8089/auth/login";
             const { data: res } = await axios.post(url, data);
             localStorage.setItem("token", res.token);
             window.location = "/";
-        }
+        } 
         catch (error) {
-            if (
-                error.response &&
-                error.response.status >= 400 &&
-                error.response.status <= 500
-            ) {
-                setError(error.response.message);
+            if (error.response && error.response.status >= 400 && error.response.status <= 500) {
+                setError(error.response.data); 
+            } else {
+                setError("Wystąpił nieoczekiwany błąd.");
             }
         }
-    }
+    };
 
     return (
         <div className={styles.login_container}>
