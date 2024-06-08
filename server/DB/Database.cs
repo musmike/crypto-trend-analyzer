@@ -10,6 +10,11 @@ namespace server.DB {
             var client = new MongoDB.Driver.MongoClient(_configuration["MongoDBSettings:ConnectionString"]);
             _database = client.GetDatabase(_configuration["MongoDBSettings:DatabaseName"]);
             }
+        public async Task<IEnumerable<Models.Coin>> GetCoin(string a) {
+            var filter = Builders<Models.Coin>.Filter.Eq(c => c.coin, a);
+            var coin = _database.GetCollection<Models.Coin>("coins");
+            return await coin.Find(filter).ToListAsync();
+        }
         public async Task<IEnumerable<Models.Coin>>GetCoins(string a, string b) {
             var filter = Builders<Models.Coin>.Filter.In(c => c.coin, new[] { a, b });
             var coins = _database.GetCollection<Models.Coin>("coins");

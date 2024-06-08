@@ -35,11 +35,5 @@ namespace server.Controllers {
             }
             return Ok(new { token });
         }
-
-        [HttpGet("hello")]
-        public async Task<IActionResult> Hello()
-        {
-            return Ok("Hello, World!");
-        }
     }
 }
