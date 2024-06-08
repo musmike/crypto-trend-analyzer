@@ -1,19 +1,24 @@
+# Wersja Docker Compose
 version: '3.7'
 
+# Lista usług srodowiska
 services:
+
+  # Frontend
   client:
-    container_name: web_server
-    build: ./client
-    ports:
-      - "3100:80"
-    networks:
+    container_name: web-server     # Nazwa kontenera
+    build: ./client                # Lokalizacja pliku Dockerfile
+    ports:                         # Przekierowanie portu 3100 hosta do portu 80 wewnatrz kontenera
+      - "3100:80"    
+    networks:                      # Sieci, do ktorych nalezy serwis
       - frontend
       - backend
-    depends_on:
-     - db
-     - server
-    restart: always
+    depends_on:                    # Serwisy, po ktorych zostanie dopiero uruchomiony serwis 'client'
+      - db
+      - server
+    restart: always                # Usluga zawsze uruchamiana ponownie po zatrzymaniu
 
+  # Backend
   server:
     container_name: rest-server
     build: ./server
@@ -21,28 +26,29 @@ services:
       - "8089:8080"
     networks:
       - backend
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
     depends_on:
       - db
     restart: always
 
+  # Baza danych
   db:
-    container_name: database_server
+    container_name: database-server
     build: ./mongodb
     ports:
       - "27018:27017"
     networks:
       - backend
-    volumes:
-      - db_dumps:/data/db
-      - ./mongodb/init:/mongodb/init
-    command: ["bash", "/mongodb/init/init.sh"]
+    volumes:                     
+      - db_dumps:/data/db          # Mapowanie woluminu do sciezki w systemie plikow kontenera
+    #   - ./mongodb/init:/mongodb/init
+    # command: ["bash", "/mongodb/init/init.sh"]
     restart: always
 
+# Sieci aplikacji:
 networks:
   backend:
   frontend:
 
+# Wolumeny aplikacji:
 volumes:
   db_dumps:
