@@ -8,6 +8,7 @@ using System.Security.Claims;
 using System.Text;
 using BCrypt.Net;
 using MongoDB.Bson;
+using Microsoft.AspNetCore.Mvc;
 
 namespace server.Auth {
     public class Auth : IAuth{
@@ -19,11 +20,11 @@ namespace server.Auth {
             _configuration = configuration;
         }
         
-        public async Task<bool> RegisterAsync(User user) {
+        public async Task<bool> RegisterAsync([FromBody]User user) {
             var valRes = new List<ValidationResult>();
             var valCon = new ValidationContext(user, null, null);
 
-            if(Validator.TryValidateObject(user, valCon, valRes, true)) {
+            if(!Validator.TryValidateObject(user, valCon, valRes, true)) {
                 var errors = valRes.Select(res=>res.ErrorMessage).ToList();
                 throw new ValidationException(string.Join("; ", errors));
             }
@@ -43,7 +44,7 @@ namespace server.Auth {
             return true;
         }
 
-        public async Task<string> LoginAsync(LoginUser user)
+        public async Task<string> LoginAsync([FromBody]User user)
         {
             var exist = await _users.Find(u => u.username == user.username).FirstOrDefaultAsync();
 

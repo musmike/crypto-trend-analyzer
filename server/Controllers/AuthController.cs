@@ -28,7 +28,7 @@ namespace server.Controllers {
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginUser user) {
+        public async Task<IActionResult> Login(User user) {
             var token = await _auth.LoginAsync(user);
             if (token == null) {
                 return Unauthorized("Invalid credentials");
