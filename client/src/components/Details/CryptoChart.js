@@ -61,7 +61,7 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
 
         const cryptoColors = {
             "BTC": "rgb(255, 51, 153)", // Różowy
-            "ETH": "rgb(0, 153, 204)", // Jasnoniebieski
+            "ETH": "rgb(0, 153, 204)", // Jasnoniebieski 
             "BNB": "rgb(204, 0, 204)", // Purpurowy
             "DOGE": "rgb(255, 102, 0)", // Pomarańczowy
             "LTC": "rgb(102, 51, 0)" // Brązowy
