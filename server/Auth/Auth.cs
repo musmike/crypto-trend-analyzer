@@ -28,7 +28,9 @@ namespace server.Auth {
                 var errors = valRes.Select(res=>res.ErrorMessage).ToList();
                 throw new ValidationException(string.Join("; ", errors));
             }
-
+            if(string.IsNullOrEmpty(user.email)) {
+                throw new ValidationException("Adres email jest wymagany!");
+            }
             var exist = await _users.Find(u => u.username == user.username || u.email == user.email).FirstOrDefaultAsync();
             if (exist != null)
             {

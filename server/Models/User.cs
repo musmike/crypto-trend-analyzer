@@ -12,9 +12,8 @@ namespace server.Models {
         public string username { get; set; }
 
         [BsonElement("email")]
-        [Required(ErrorMessage = "Adres email jest wymagany!")]
         [EmailAddress(ErrorMessage = "Niepoprawny email")]
-        public string email { get; set; }
+        public string? email { get; set; }
 
         [BsonElement("password")]
         [Required(ErrorMessage = "Hasło jest wymagane")]

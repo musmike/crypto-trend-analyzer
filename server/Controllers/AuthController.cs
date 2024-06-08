@@ -17,9 +17,9 @@ namespace server.Controllers {
             try {
                 var result = await _auth.RegisterAsync(user);
                 if (result) {
-                    return Ok("Succesful registration");
+                    return Ok("Rejestracja udana!");
                 }
-                return BadRequest("Failed registration");
+                return BadRequest("Błąd rejestracji");
 
                 }
             catch (ValidationException e){
@@ -31,7 +31,7 @@ namespace server.Controllers {
         public async Task<IActionResult> Login(User user) {
             var token = await _auth.LoginAsync(user);
             if (token == null) {
-                return Unauthorized("Invalid credentials");
+                return Unauthorized("Niepoprawne dane");
             }
             return Ok(new { token });
         }
