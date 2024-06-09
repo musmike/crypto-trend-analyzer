@@ -12,7 +12,7 @@ popkultura itp.). Dzięki niej można analizować siłę oddziaływania poszczeg
 
 ## Struktura projektu
 Aplikacja składa się z 3 usług:
-- frontendu powstałego przy użyciu szkieletu programistycznego React, udostępionego na serwerze Nginx,
+- frontendu powstałego przy użyciu szkieletu programistycznego React, udostępnionego na serwerze Nginx,
 - rest-api powstałego przy użyciu ASP.NET Core,
 - nierelacyjnej bazy danych MongoDB
 
@@ -28,7 +28,7 @@ Dla uruchomienia aplikacji wymagane jest zainstalowanie Docker Engine i Docker C
 ## Instrukcja
 1. Pobierz całe repozytorium.
 2. Przejdź do katalogu głównego projektu, gdzie znajduje się plik docker-compose.yml.
-3. Uruchom polecenie docker-compose up -d (lub docker-compose up -d --build), aby zbudować i uruchomić wszystkie usługi aplikacji.
+3. Uruchom polecenie docker compose up -d (lub docker compose up -d --build), aby zbudować i uruchomić wszystkie usługi aplikacji.
 4. Otwórz przeglądarkę internetową i wejdź na adres http://localhost:3100 (w pliku docker-compose.yml możesz zmienić port)
 5. W celu skorzystania z analizy danych dotyczących kryptowalut należy się zarejestrować i zalogować na konto.
 6. Po zakończeniu pracy zatrzymaj aplikację poprzez polecenie docker-compose down
