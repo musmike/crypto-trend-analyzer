@@ -60,9 +60,11 @@ const Details = () => {
                 <div className={styles.button_container}>
                     <button onClick={fetchData} className={styles.refresh_button}>Odśwież dane 🗘</button>
                 </div>
-    
-                {isLoading ? ( // Wyświetlenie kółka ładowania jeśli dane są ładowane
-                    <div className={styles.loader}></div>
+
+                {isLoading ? (
+                    <div className={styles.loader_container}>
+                        <div className={styles.loader}></div>
+                    </div>
                 ) : (
                     <>
                         <div className={styles.chart_container}>

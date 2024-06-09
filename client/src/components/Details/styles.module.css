@@ -46,6 +46,10 @@ p {
     margin-top: 20px; 
 }
 
+.loader_container {
+    text-align: center;
+}
+
 .loader {
     position: fixed;
     top: 50%;
