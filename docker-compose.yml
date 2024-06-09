@@ -40,8 +40,6 @@ services:
       - backend
     volumes:                     
       - db_dumps:/data/db          # Mapowanie woluminu do sciezki w systemie plikow kontenera
-    #   - ./mongodb/init:/mongodb/init
-    # command: ["bash", "/mongodb/init/init.sh"]
     restart: always
 
 # Sieci aplikacji:
