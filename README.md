@@ -12,7 +12,7 @@ popkultura itp.). Dzięki niej można analizować siłę oddziaływania poszczeg
 
 ## Struktura projektu
 Aplikacja składa się z 3 usług:
-- frontendu powstałego przy użyciu szkieletu programistycznego React, udostępionego na serwerze Nginx,
+- frontendu powstałego przy użyciu szkieletu programistycznego React, udostępnionego na serwerze Nginx,
 - rest-api powstałego przy użyciu ASP.NET Core,
 - nierelacyjnej bazy danych MongoDB
 
