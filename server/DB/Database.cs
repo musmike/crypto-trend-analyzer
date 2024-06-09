@@ -6,7 +6,6 @@ namespace server.DB {
         private readonly IConfiguration _configuration;
         public Database(IConfiguration configuration) {
             _configuration = configuration;
-            //var client = new MongoDB.Driver.MongoClient(config);
             var client = new MongoDB.Driver.MongoClient(_configuration["MongoDBSettings:ConnectionString"]);
             _database = client.GetDatabase(_configuration["MongoDBSettings:DatabaseName"]);
             }
