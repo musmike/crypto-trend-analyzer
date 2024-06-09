@@ -31,7 +31,7 @@ namespace server.Controllers {
         public async Task<IActionResult> Login(User user) {
             var token = await _auth.LoginAsync(user);
             if (token == null) {
-                return Unauthorized("Niepoprawne dane");
+                return Unauthorized("Niepoprawny adres użytkownika lub hasło!");
             }
             return Ok(new { token });
         }
