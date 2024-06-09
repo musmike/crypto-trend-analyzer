@@ -33,7 +33,7 @@ const CryptoTable = ({ cryptocurrencyData }) => {
 		<div className={styles.tableContainer}>
 			<table className={styles.cryptoTable}>
 				<thead>
-				<tr>
+					<tr>
 						<th>Data</th>
 						{cryptocurrencies.map(crypto => (
 							<th key={crypto}>
