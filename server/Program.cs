@@ -38,11 +38,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
         options.Events = new JwtBearerEvents {
             OnAuthenticationFailed = context => {
-                Console.WriteLine("Authentication failed: " + context.Exception.Message);
+                Console.WriteLine("Autentykacja udana: " + context.Exception.Message);
                 return Task.CompletedTask;
             },
             OnTokenValidated = context => {
-                Console.WriteLine("Token validated: " + context.SecurityToken);
+                Console.WriteLine("Token zwalidowany: " + context.SecurityToken);
                 return Task.CompletedTask;
             }
         };
