@@ -1,4 +1,4 @@
-# Wpływ wydarzeń na kursy krypowalut
+# Wpływ wydarzeń na kursy kryptowalut
 
 ## Autorzy
 Michał Muzyka i Mateusz Niedźwiedź
