@@ -1,39 +1,36 @@
-# Wpływ wydarzeń na kursy kryptowalut
+# Impact of Events on Cryptocurrency Prices
 
-## Autorzy
-Michał Muzyka i Mateusz Niedźwiedź
+## Authors
+Michał Muzyka and Mateusz Niedźwiedź
 
-## Opis
-Projekt ten umożliwia uruchomienie aplikacji internetowej za pomocą narzędzia Docker Compose.
-Aplikacja ta ukazuje kształtowanie się wartości poszczególnych kryptowalut w czasie, z uwzględnieniem 
-wydarzeń jakie miały miejsce, z podziałem na kategorie wydarzeń (np. gospodarka, 
-popkultura itp.). Dzięki niej można analizować siłę oddziaływania poszczególnych wydarzeń i kategorii wydarzeń oraz różnice w trendach pomiędzy kryptowalutami. 
+## Description  
+This project enables running a web application using Docker Compose. The application presents the evolution of individual cryptocurrency values over time, taking into account events that have occurred, divided into event categories (e.g., economy, pop culture, etc.). It allows users to analyze the strength of the impact of specific events and event categories, as well as differences in trends between cryptocurrencies.
 
+## Project Structure  
+The application consists of three services:
+- a frontend built using the React framework, served via an Nginx server,
+- a REST API built using ASP.NET Core,
+- a non-relational MongoDB database.
 
-## Struktura projektu
-Aplikacja składa się z 3 usług:
-- frontendu powstałego przy użyciu szkieletu programistycznego React, udostępnionego na serwerze Nginx,
-- rest-api powstałego przy użyciu ASP.NET Core,
-- nierelacyjnej bazy danych MongoDB
+The project contains directories for the frontend (client), backend (rest-api), and database (mongodb).  
+Each of them includes a Dockerfile required to build the image for a specific service.
 
-Projekt zawiera katalogi frontendu (client), backendu (rest-api) i bazy danych (mongodb). 
-W każdym z nich znajduje się plik Dockerfile potrzebny do utworzenia obrazu konkretnej usługi. 
-W katalogu client znajduje się też plik konfiguracyjny serwera Nginx.
-Jest też osobny katalog (db_dumps) używany jako wolumen na przechowywanie danych bazy nawet po wyłączeniu kontenera.
-Całość projektu zwieńcza plik docker-compose.yml, który łączy kontenery w jedno środowisko aplikacji.
+The `client` directory also contains the Nginx server configuration file. There is also a separate directory (`db_dumps`) used as a volume to store database data even after the container is stopped.
 
-## Wymagania
-Dla uruchomienia aplikacji wymagane jest zainstalowanie Docker Engine i Docker Compose na systemie operacyjnym oraz posiadanie stosunkowo nowej przeglądarki internetowej.
+The entire project is tied together by the `docker-compose.yml` file, which connects the containers into a single application environment.
 
-## Instrukcja
-1. Pobierz całe repozytorium.
-2. Przejdź do katalogu głównego projektu, gdzie znajduje się plik docker-compose.yml.
-3. Uruchom polecenie docker compose up -d (lub docker compose up -d --build), aby zbudować i uruchomić wszystkie usługi aplikacji.
-4. Otwórz przeglądarkę internetową i wejdź na adres http://localhost:3100 (w pliku docker-compose.yml możesz zmienić port)
-5. W celu skorzystania z analizy danych dotyczących kryptowalut należy się zarejestrować i zalogować na konto.
-6. Po zakończeniu pracy zatrzymaj aplikację poprzez polecenie docker-compose down
+## Requirements  
+To run the application, Docker Engine and Docker Compose must be installed on the operating system, and a relatively modern web browser is required.
 
-## Konfiguracja
-Konfiguracja projektu jest zawarta w pliku docker-compose.yml. W tym pliku możesz dostosować ustawienia kontenerów takie jak porty, zmienne środowiskowe itp. według swoich potrzeb. Jest to szczególnie ważne, gdy jakiś port używany przez usługi aplikacji jest już zajęty.
+## Instructions  
+1. Download the entire repository.  
+2. Navigate to the main project directory where the `docker-compose.yml` file is located.  
+3. Run the command `docker compose up -d` (or `docker compose up -d --build`) to build and start all application services.  
+4. Open a web browser and go to `http://localhost:3100` (you can change the port in the `docker-compose.yml` file).  
+5. To use the cryptocurrency data analysis features, you need to register and log in to an account.  
+6. After finishing your work, stop the application using the command `docker-compose down`.
+
+## Configuration  
+The project configuration is contained in the `docker-compose.yml` file. In this file, you can customize container settings such as ports, environment variables, etc., according to your needs. This is especially important if a port used by one of the application services is already in use.
 
 
