@@ -1,6 +1,8 @@
-@server_HostAddress = http://localhost:5098
+@server_HostAddress = http://localhost:8089
 
-GET {{server_HostAddress}}/view/BNB;BTC
+GET {{server_HostAddress}}/view/compare?a=BNB&b=BTC
 Accept: application/json
 
 ###
+GET {{server_HostAddress}}/view/all
+Accept: application/json

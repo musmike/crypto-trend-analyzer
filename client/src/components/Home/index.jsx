@@ -20,16 +20,18 @@ const Home = () => {
     useEffect(() => {
         const fetchCryptoPrices = async () => {
             try {
-                const response = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,binancecoin,dogecoin,litecoin&vs_currencies=usd');
+                const response = await axios.get(
+                    'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,binancecoin,dogecoin,litecoin&vs_currencies=usd'
+                );
                 setCryptoPrices({
-                    bitcoin: response.data.bitcoin.usd,
-                    ethereum: response.data.ethereum.usd,
-                    binanceCoin: response.data.binancecoin.usd,
-                    dogecoin: response.data.dogecoin.usd,
-                    litecoin: response.data.litecoin.usd
+                    bitcoin: response.data.bitcoin?.usd,
+                    ethereum: response.data.ethereum?.usd,
+                    binanceCoin: response.data.binancecoin?.usd,
+                    dogecoin: response.data.dogecoin?.usd,
+                    litecoin: response.data.litecoin?.usd
                 });
             } catch (error) {
-                console.error('Error fetching crypto prices:', error);
+                console.error('Error fetching live crypto prices:', error);
             }
         };
 
@@ -38,61 +40,60 @@ const Home = () => {
 
     return (
         <div className={styles.home_container}>
-
             <div className={styles.content_container}>
-
                 <div className={styles.left_container}>
-                    <h1>Kryptowaluty</h1>
-
-                    <p>Kryptowaluty to cyfrowe lub wirtualne waluty zabezpieczone kryptografią. Oto kilka z najbardziej znanych kryptowalut:</p>
+                    <h1>Cryptocurrencies Overview</h1>
+                    <p>
+                        Cryptocurrencies are digital or virtual assets secured by cryptographic systems.
+                        Below are the key digital assets tracked in this analytics platform:
+                    </p>
                     <ul>
-                        <li><strong>Bitcoin (BTC)</strong> - Pierwsza i najbardziej znana kryptowaluta, stworzona w
-                            2009 roku przez osobę lub grupę osób pod pseudonimem Satoshi Nakamoto. Często nazywana "cyfrowym złotem".</li>
-                        <li><strong>Ethereum (ETH)</strong> - Platforma zdecentralizowanych aplikacji, znana ze
-                            swojej funkcji inteligentnych kontraktów. Stworzona przez Vitalika Buterina w 2015 roku.</li>
-                        <li><strong>Binance Coin (BNB)</strong> - Kryptowaluta wydana przez giełdę Binance. Używana
-                            jest do opłacania transakcji na platformie Binance oraz do udziału w specjalnych ofertach tokenów.</li>
-                        <li><strong>Dogecoin (DOGE)</strong> - Kryptowaluta stworzona jako żart w 2013 roku, oparta
-                            na popularnym memie z psem rasy Shiba Inu. Pomimo swojego początkowego żartobliwego charakteru, zdobyła dużą popularność.</li>
-                        <li><strong>Litecoin (LTC)</strong> - Stworzony w 2011 roku przez Charliego Lee, były pracownik Google.
-                            Litecoin oferuje szybsze transakcje w porównaniu do Bitcoina i jest często nazywany "cyfrowym srebrem".</li>
+                        <li>
+                            <strong>Bitcoin (BTC)</strong> — The first and most established cryptocurrency, created in 2009 by Satoshi Nakamoto. Often referred to as "digital gold".
+                        </li>
+                        <li>
+                            <strong>Ethereum (ETH)</strong> — A decentralized platform powering smart contracts and decentralized finance (DeFi), created in 2015 by Vitalik Buterin.
+                        </li>
+                        <li>
+                            <strong>Binance Coin (BNB)</strong> — The native utility token of the Binance ecosystem, used for fee discounts and network transactions.
+                        </li>
+                        <li>
+                            <strong>Dogecoin (DOGE)</strong> — An open-source peer-to-peer cryptocurrency initially created as a lighthearted meme coin that grew into a widely recognized digital currency.
+                        </li>
+                        <li>
+                            <strong>Litecoin (LTC)</strong> — Introduced in 2011 by Charlie Lee as a lighter, faster alternative to Bitcoin, often described as "silver to Bitcoin's gold".
+                        </li>
                     </ul>
-
                 </div>
 
                 <div className={styles.right_container}>
-
-                    <h2>Aktualne kursy kryptowalut:</h2>
-
+                    <h2>Live Market Prices (USD):</h2>
                     <table className={styles.crypto_table}>
                         <tbody>
                             <tr>
-                                <td><img src={bitcoinIcon} alt="Bitcoin icon" /> Bitcoin (BTC)</td>
-                                <td>{cryptoPrices.bitcoin ? `$${cryptoPrices.bitcoin}` : 'Ładowanie...'}</td>
+                                <td><img src={bitcoinIcon} alt="Bitcoin" /> Bitcoin (BTC)</td>
+                                <td>{cryptoPrices.bitcoin ? `$${cryptoPrices.bitcoin.toLocaleString()}` : 'Loading...'}</td>
                             </tr>
                             <tr>
-                                <td><img src={ethereumIcon} alt="Ethereum icon" /> Ethereum (ETH)</td>
-                                <td>{cryptoPrices.ethereum ? `$${cryptoPrices.ethereum}` : 'Ładowanie...'}</td>
+                                <td><img src={ethereumIcon} alt="Ethereum" /> Ethereum (ETH)</td>
+                                <td>{cryptoPrices.ethereum ? `$${cryptoPrices.ethereum.toLocaleString()}` : 'Loading...'}</td>
                             </tr>
                             <tr>
-                                <td><img src={binanceCoinIcon} alt="Binance Coin icon" /> Binance Coin (BNB)</td>
-                                <td>{cryptoPrices.binanceCoin ? `$${cryptoPrices.binanceCoin}` : 'Ładowanie...'}</td>
+                                <td><img src={binanceCoinIcon} alt="Binance Coin" /> Binance Coin (BNB)</td>
+                                <td>{cryptoPrices.binanceCoin ? `$${cryptoPrices.binanceCoin.toLocaleString()}` : 'Loading...'}</td>
                             </tr>
                             <tr>
-                                <td><img src={dogecoinIcon} alt="Dogecoin icon" /> Dogecoin (DOGE)</td>
-                                <td>{cryptoPrices.dogecoin ? `$${cryptoPrices.dogecoin}` : 'Ładowanie...'}</td>
+                                <td><img src={dogecoinIcon} alt="Dogecoin" /> Dogecoin (DOGE)</td>
+                                <td>{cryptoPrices.dogecoin ? `$${cryptoPrices.dogecoin.toLocaleString()}` : 'Loading...'}</td>
                             </tr>
                             <tr>
-                                <td><img src={litecoinIcon} alt="Litecoin icon" /> Litecoin (LTC)</td>
-                                <td>{cryptoPrices.litecoin ? `$${cryptoPrices.litecoin}` : 'Ładowanie...'}</td>
+                                <td><img src={litecoinIcon} alt="Litecoin" /> Litecoin (LTC)</td>
+                                <td>{cryptoPrices.litecoin ? `$${cryptoPrices.litecoin.toLocaleString()}` : 'Loading...'}</td>
                             </tr>
                         </tbody>
                     </table>
-
                 </div>
-
             </div>
-
         </div>
     );
 };

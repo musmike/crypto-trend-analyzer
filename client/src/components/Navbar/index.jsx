@@ -11,37 +11,32 @@ const Navbar = () => {
 
     return (
         <nav className={styles.navbar}>
-
-            <h1><Link to="/" className={styles.navbarBrand}>Kryptowaluty</Link></h1>
+            <h1><Link to="/" className={styles.navbarBrand}>Crypto Trend Analyzer</Link></h1>
 
             <ul className={styles.navLinks}>
-
                 <li>
-                    <Link to="/" className={styles.navLink}>Strona główna</Link>
+                    <Link to="/" className={styles.navLink}>Home</Link>
                 </li>
-
                 <li>
-                    <Link to="/details" className={styles.navLink}>Analiza kursów kryptowalut</Link>
+                    <Link to="/details" className={styles.navLink}>Trend Analysis</Link>
                 </li>
-
                 {!user ? (
                     <>
                         <li>
-                            <Link to="/login" className={styles.navLink}>Zaloguj się</Link>
+                            <Link to="/login" className={styles.navLink}>Sign In</Link>
                         </li>
                         <li>
-                            <Link to="/register" className={styles.navLink}>Zarejestruj się</Link>
+                            <Link to="/register" className={styles.navLink}>Sign Up</Link>
                         </li>
                     </>
                 ) : (
                     <li>
                         <Link onClick={handleLogout} to="/" className={styles.navLink}>
-                            Wyloguj się
+                            Sign Out
                         </Link>
                     </li>
                 )}
             </ul>
-
         </nav>
     );
 };

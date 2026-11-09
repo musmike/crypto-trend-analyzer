@@ -8,6 +8,7 @@ namespace server.Controllers {
     [Route("[controller]")]
     public class AuthController : Controller {
         private readonly IAuth _auth;
+
         public AuthController(IAuth auth) { 
             _auth = auth;
         }
@@ -17,13 +18,12 @@ namespace server.Controllers {
             try {
                 var result = await _auth.RegisterAsync(user);
                 if (result) {
-                    return Ok("Rejestracja udana!");
+                    return Ok("Registration successful.");
                 }
-                return BadRequest("Błąd rejestracji");
-
-                }
-            catch (ValidationException e){
-                return BadRequest(e.Message);
+                return BadRequest("Registration failed.");
+            }
+            catch (ValidationException ex) {
+                return BadRequest(ex.Message);
             }
         }
 
@@ -31,7 +31,7 @@ namespace server.Controllers {
         public async Task<IActionResult> Login(User user) {
             var token = await _auth.LoginAsync(user);
             if (token == null) {
-                return Unauthorized("Niepoprawny adres użytkownika lub hasło!");
+                return Unauthorized("Invalid username or password.");
             }
             return Ok(new { token });
         }

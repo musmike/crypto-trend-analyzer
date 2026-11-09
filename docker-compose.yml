@@ -1,52 +1,54 @@
-# Wersja Docker Compose
-version: '3.7'
-
-# Lista usług srodowiska
 services:
-
-  # Frontend
+  # Frontend - React application served via Nginx
   client:
-    container_name: web-server     # Nazwa kontenera
-    build: ./client                # Lokalizacja pliku Dockerfile
-    ports:                         # Przekierowanie portu 3100 hosta do portu 80 wewnatrz kontenera
-      - "3100:80"    
-    networks:                      # Sieci, do ktorych nalezy serwis
+    container_name: web-server
+    build: ./client
+    ports:
+      - "127.0.0.1:3100:80"
+    networks:
       - frontend
       - backend
-    depends_on:                    # Serwisy, po ktorych zostanie dopiero uruchomiony serwis 'client'
+    depends_on:
       - db
       - server
-    restart: always                # Usluga zawsze uruchamiana ponownie po zatrzymaniu
+    restart: always
 
-  # Backend
+  # Backend - ASP.NET Core 8 Web API
   server:
     container_name: rest-server
     build: ./server
     ports:
-      - "8089:8080"
+      - "127.0.0.1:8089:8080"
+    environment:
+      - MongoDBSettings__ConnectionString=${MONGO_CONNECTION_STRING}
+      - MongoDBSettings__DatabaseName=${MONGO_DATABASE_NAME}
+      - Token__Key=${JWT_SECRET_KEY}
+      - Token__Issuer=${JWT_ISSUER}
+      - Token__Audience=${JWT_AUDIENCE}
+      - DemoUser__Username=${DEMO_USERNAME}
+      - DemoUser__Email=${DEMO_EMAIL}
+      - DemoUser__Password=${DEMO_PASSWORD}
     networks:
       - backend
     depends_on:
       - db
     restart: always
 
-  # Baza danych
+  # Database - Official MongoDB image
   db:
     container_name: database-server
-    build: ./mongodb
+    image: mongo:latest
     ports:
-      - "27018:27017"
+      - "127.0.0.1:27018:27017"
     networks:
       - backend
-    volumes:                     
-      - db_dumps:/data/db          # Mapowanie woluminu do sciezki w systemie plikow kontenera
+    volumes:
+      - mongo_crypto_data:/data/db
     restart: always
 
-# Sieci aplikacji:
 networks:
   backend:
   frontend:
 
-# Wolumeny aplikacji:
 volumes:
-  db_dumps:
+  mongo_crypto_data:

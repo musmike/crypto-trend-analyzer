@@ -4,11 +4,7 @@ import { Link } from "react-router-dom";
 import styles from "./styles.module.css";
 
 const Login = () => {
-    const [data, setData] = useState({
-        username: "",
-        password: ""
-    });
-
+    const [data, setData] = useState({ username: "", password: "" });
     const [error, setError] = useState("");
 
     const handleChange = ({ currentTarget: input }) => {
@@ -17,18 +13,16 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
         try {
             const url = "http://localhost:8089/auth/login";
             const { data: res } = await axios.post(url, data);
             localStorage.setItem("token", res.token);
-            window.location = "/";
-        } 
-        catch (error) {
+            window.location = "/details";
+        } catch (error) {
             if (error.response && error.response.status >= 400 && error.response.status <= 500) {
-                setError(error.response.data); 
+                setError(error.response.data);
             } else {
-                setError("Wystąpił nieoczekiwany błąd.");
+                setError("An unexpected error occurred. Please try again.");
             }
         }
     };
@@ -36,26 +30,21 @@ const Login = () => {
     return (
         <div className={styles.login_container}>
             <div className={styles.login_form_container}>
-
                 <div className={styles.left}>
-
                     <form className={styles.form_container} onSubmit={handleSubmit}>
-
-                        <h1>Zaloguj się na swoje konto</h1>
-
+                        <h1>Sign In</h1>
                         <input
                             type="text"
-                            placeholder="Nazwa użytkownika"
+                            placeholder="Username"
                             name="username"
                             onChange={handleChange}
                             value={data.username}
                             required
                             className={styles.input}
                         />
-
                         <input
                             type="password"
-                            placeholder="Hasło"
+                            placeholder="Password"
                             name="password"
                             onChange={handleChange}
                             value={data.password}
@@ -63,32 +52,25 @@ const Login = () => {
                             className={styles.input}
                         />
 
-                        {error && <div
-                            className={styles.error_msg}>{error}</div>}
+                        {error && <div className={styles.error_msg}>{error}</div>}
 
                         <button type="submit" className={styles.login_btn}>
-                            Zaloguj się
+                            Sign In
                         </button>
-
                     </form>
                 </div>
 
                 <div className={styles.right}>
-
-                    <h1>Nie masz konta?</h1>
-
+                    <h1>New Here?</h1>
                     <Link to="/register">
                         <button type="button" className={styles.register_btn}>
-                            Zarejestruj się
+                            Create Account
                         </button>
                     </Link>
-
                 </div>
-
             </div>
         </div>
     );
-
 };
 
 export default Login;

@@ -6,12 +6,10 @@ using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using BCrypt.Net;
 using MongoDB.Bson;
-using Microsoft.AspNetCore.Mvc;
 
 namespace server.Auth {
-    public class Auth : IAuth{
+    public class Auth : IAuth {
         private readonly IMongoCollection<User> _users;
         private readonly IConfiguration _configuration;
 
@@ -20,57 +18,55 @@ namespace server.Auth {
             _configuration = configuration;
         }
         
-        public async Task<bool> RegisterAsync([FromBody]User user) {
-            var valRes = new List<ValidationResult>();
-            var valCon = new ValidationContext(user, null, null);
+        public async Task<bool> RegisterAsync(User user) {
+            var validationResults = new List<ValidationResult>();
+            var validationContext = new ValidationContext(user, null, null);
 
-            if(!Validator.TryValidateObject(user, valCon, valRes, true)) {
-                var errors = valRes.Select(res=>res.ErrorMessage).ToList();
+            if (!Validator.TryValidateObject(user, validationContext, validationResults, true)) {
+                var errors = validationResults.Select(r => r.ErrorMessage).ToList();
                 throw new ValidationException(string.Join("; ", errors));
             }
-            if(string.IsNullOrEmpty(user.email)) {
-                throw new ValidationException("Adres email jest wymagany!");
-            }
-            var exist = await _users.Find(u => u.username == user.username || u.email == user.email).FirstOrDefaultAsync();
-            if (exist != null)
-            {
-                throw new ValidationException("Uzytkownik o danej nazwie uzytkownika lub adresie email istnieje!");
+
+            if (string.IsNullOrEmpty(user.email)) {
+                throw new ValidationException("Email address is required.");
             }
 
-            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.password);
+            var existingUser = await _users.Find(u => u.username == user.username || u.email == user.email).FirstOrDefaultAsync();
+            if (existingUser != null) {
+                throw new ValidationException("A user with this username or email already exists.");
+            }
 
-            user.password = hashedPassword;
+            user.password = BCrypt.Net.BCrypt.HashPassword(user.password);
             user.id = ObjectId.GenerateNewId();
             await _users.InsertOneAsync(user);
 
             return true;
         }
 
-        public async Task<string> LoginAsync([FromBody]User user)
-        {
-            var exist = await _users.Find(u => u.username == user.username).FirstOrDefaultAsync();
+        public async Task<string?> LoginAsync(User user) {
+            var existingUser = await _users.Find(u => u.username == user.username).FirstOrDefaultAsync();
 
-            if (exist == null || !BCrypt.Net.BCrypt.Verify(user.password, exist.password))
-            {
+            if (existingUser == null || !BCrypt.Net.BCrypt.Verify(user.password, existingUser.password)) {
                 return null;
             }
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["Token:key"]);
+            var jwtKey = _configuration["Token:Key"] 
+                ?? throw new InvalidOperationException("JWT Key is not configured.");
 
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, exist.username)
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(jwtKey);
+
+            var tokenDescriptor = new SecurityTokenDescriptor {
+                Subject = new ClaimsIdentity(new[] {
+                    new Claim(ClaimTypes.Name, existingUser.username)
                 }),
                 Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-                Issuer = _configuration["Token:issuer"],
-                Audience = _configuration["Token:audience"]
+                Issuer = _configuration["Token:Issuer"],
+                Audience = _configuration["Token:Audience"]
             };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
 
+            var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
     }

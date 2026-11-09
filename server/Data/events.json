@@ -1,0 +1,92 @@
+[
+    {
+        "_id": { "$oid": "6661561b94dd7ee3560deb88" },
+        "name": "Elon Musk Hosts Saturday Night Live (SNL)",
+        "date": "2021-05-08",
+        "type": "Pop Culture"
+    },
+    {
+        "_id": { "$oid": "6661561b94dd7ee3560deb89" },
+        "name": "US Presidential Election",
+        "date": "2020-10-03",
+        "type": "Politics"
+    },
+    {
+        "_id": { "$oid": "6661561b94dd7ee3560deb8a" },
+        "name": "US Travel Restrictions Due to COVID-19",
+        "date": "2020-03-12",
+        "type": "Economy"
+    },
+    {
+        "_id": { "$oid": "6661561b94dd7ee3560deb8b" },
+        "name": "Avatar: The Way of Water Premiere",
+        "date": "2022-12-06",
+        "type": "Pop Culture"
+    },
+    {
+        "_id": { "$oid": "6661561b94dd7ee3560deb8c" },
+        "name": "Bored Ape Yacht Club (BAYC) Launch",
+        "date": "2021-04-30",
+        "type": "Technology"
+    },
+    {
+        "_id": { "$oid": "6661561b94dd7ee3560deb8d" },
+        "name": "Tokyo 2020 Summer Olympics Opening",
+        "date": "2021-07-23",
+        "type": "Sports"
+    },
+    {
+        "_id": { "$oid": "6661561b94dd7ee3560deb8e" },
+        "name": "FIFA World Cup Qatar 2022",
+        "date": "2022-11-20",
+        "type": "Sports"
+    },
+    {
+        "_id": { "$oid": "6661561b94dd7ee3560deb8f" },
+        "name": "FIVB Volleyball Men's World Championship",
+        "date": "2022-07-26",
+        "type": "Sports"
+    },
+    {
+        "_id": { "$oid": "6661561b94dd7ee3560deb90" },
+        "name": "Russia Invades Ukraine",
+        "date": "2022-02-24",
+        "type": "Politics"
+    },
+    {
+        "_id": { "$oid": "6661561b94dd7ee3560deb91" },
+        "name": "OpenAI Releases ChatGPT",
+        "date": "2022-11-30",
+        "type": "Technology"
+    },
+    {
+        "_id": { "$oid": "6661561b94dd7ee3560deb92" },
+        "name": "Outbreak of the Israel-Hamas War",
+        "date": "2023-10-07",
+        "type": "Politics"
+    },
+    {
+        "_id": { "$oid": "6661561b94dd7ee3560deb93" },
+        "name": "Squid Game Premiere on Netflix",
+        "date": "2021-10-17",
+        "type": "Pop Culture"
+    },
+    {
+        "_id": { "$oid": "6661561b94dd7ee3560deb94" },
+        "name": "Facebook Announces Libra Cryptocurrency",
+        "date": "2019-06-19",
+        "type": "Economy"
+    },
+    {
+        "_id": { "$oid": "6661561b94dd7ee3560deb95" },
+        "name": "EU Adopts DAC8 Crypto Tax Directive",
+        "date": "2023-10-17",
+        "type": "Economy"
+    },
+    {
+        "_id": { "$oid": "6661561b94dd7ee3560deb96" },
+        "name": "PlayStation 5 Console Launch",
+        "date": "2020-11-19",
+        "type": "Technology"
+    }
+]

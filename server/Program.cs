@@ -5,26 +5,26 @@ using server.DB;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-
-
 var config = builder.Configuration;
-// Add services to the container.
 
-
-
+// Register database and authentication services
 builder.Services.AddSingleton<IDatabase, Database>();
+builder.Services.AddScoped<IAuth, Auth>();
 
+// Configure Cross-Origin Resource Sharing (CORS)
 builder.Services.AddCors(options => {
-    options.AddPolicy("AllowAll", builder => {
-        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+    options.AddPolicy("AllowAll", policy => {
+        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
     });
 });
 
 builder.Services.AddControllers();
 
-builder.Services.AddScoped<IAuth, Auth>();
+// Configure JWT bearer authentication
+var jwtKey = config["Token:Key"] 
+    ?? throw new InvalidOperationException("JWT Token Key is not configured.");
+var key = Encoding.ASCII.GetBytes(jwtKey);
 
-var key = Encoding.ASCII.GetBytes(config["Token:key"]);
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options => {
         options.TokenValidationParameters = new TokenValidationParameters {
@@ -38,34 +38,32 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
         options.Events = new JwtBearerEvents {
             OnAuthenticationFailed = context => {
-                Console.WriteLine("Autentykacja udana: " + context.Exception.Message);
+                Console.WriteLine("Authentication failed: " + context.Exception.Message);
                 return Task.CompletedTask;
             },
             OnTokenValidated = context => {
-                Console.WriteLine("Token zwalidowany: " + context.SecurityToken);
+                Console.WriteLine("Token successfully validated: " + context.SecurityToken);
                 return Task.CompletedTask;
             }
         };
     });
 
-
-
-
-
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();   
 
-
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Execute automated database seeding on application startup
+using (var scope = app.Services.CreateScope()) {
+    var database = scope.ServiceProvider.GetRequiredService<IDatabase>();
+    await database.SeedInitialDataAsync();
+}
 
 app.Run();

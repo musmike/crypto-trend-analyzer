@@ -1,36 +1,104 @@
-# Impact of Events on Cryptocurrency Prices
+# Crypto Trend Analyzer
+
+A web application for analyzing how global macroeconomic, political, technological, and cultural events correlate with cryptocurrency prices over time.
+
+The project uses historical price data alongside an event catalog to calculate price changes across multiple timeframes (1 day, 7 days, 1 month, and 1 year before and after each event).
+
+---
+
+## Screenshots
+
+| Price & Events Timeline Chart | Event Impact Matrix |
+|:---:|:---:|
+| ![Price Chart](docs/screenshots/chart-view.png) | ![Impact Table](docs/screenshots/event-influence.png) |
+
+| Historical Price Table | Live CoinGecko Feed |
+|:---:|:---:|
+| ![Price Table](docs/screenshots/price-table.png) | ![Home Overview](docs/screenshots/home-overview.png) |
+
+---
+
+## Features
+
+- **Event-Driven Charting:** Interactive price chart comparing two assets with event markers overlaid on the timeline (linear and logarithmic scales).
+- **Multi-Horizon Impact Analysis:** Pre- and post-event percentage change tables for Bitcoin, Ethereum, Binance Coin, Dogecoin, and Litecoin.
+- **Live Market Data:** Real-time crypto quotes pulled directly from the CoinGecko public API on the home page.
+- **JSON Data Export:** Export the calculated event influence matrices to a `.json` file for further analysis.
+- **Authentication:** JWT-based user authentication with BCrypt password hashing.
+- **Automatic Database Seeding:** The backend automatically imports historical data and provisions a demo user account on startup.
+
+---
+
+## Tech Stack
+
+- **Backend:** C# / .NET 8 (ASP.NET Core Web API), MongoDB C# Driver, JWT Bearer, BCrypt.Net
+- **Frontend:** React 18, Vite, React Router, Chart.js, Axios
+- **Database:** MongoDB
+- **Testing:** xUnit, Moq (.NET), Vitest, React Testing Library (React)
+- **Deployment:** Docker, Docker Compose, Nginx
+
+---
+
+## Quick Start (Docker)
+
+### Requirements
+- [Docker Engine & Docker Compose](https://docs.docker.com/get-docker/)
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/musmike/crypto-trend-analyzer.git
+cd crypto-trend-analyzer
+```
+
+### 2. Configure environment variables
+Copy the example environment file:
+```bash
+cp .env.example .env
+```
+
+### 3. Build and start the services
+```bash
+docker compose up -d --build
+```
+
+### 4. Open in browser
+Navigate to [http://localhost:3100](http://localhost:3100).
+
+### Demo Credentials
+The database is automatically seeded on startup. You can sign in using the default demo credentials configured in `.env`:
+- **Username:** `demo`
+- **Password:** `demo123`
+
+---
+
+## Running Unit Tests
+
+### Backend Tests (.NET xUnit)
+```bash
+dotnet test server.Tests/server.Tests.csproj
+```
+
+### Frontend Tests (Vitest & React Testing Library)
+```bash
+cd client
+npm install
+npm test
+```
+
+---
+
+## Architecture & Ports
+
+| Service | Technology | Port (Host) |
+|---|---|---|
+| Frontend (`client`) | React + Nginx | `http://localhost:3100` |
+| Backend API (`server`) | .NET 8 Web API | `http://localhost:8089` |
+| Database (`db`) | MongoDB | `localhost:27018` |
+
+![Architecture Diagram](docs/screenshots/compose-viz.svg)
+
+---
 
 ## Authors
-Michał Muzyka and Mateusz Niedźwiedź
-
-## Description  
-This project enables running a web application using Docker Compose. The application presents the evolution of individual cryptocurrency values over time, taking into account events that have occurred, divided into event categories (e.g., economy, pop culture, etc.). It allows users to analyze the strength of the impact of specific events and event categories, as well as differences in trends between cryptocurrencies.
-
-## Project Structure  
-The application consists of three services:
-- a frontend built using the React framework, served via an Nginx server,
-- a REST API built using ASP.NET Core,
-- a non-relational MongoDB database.
-
-The project contains directories for the frontend (client), backend (rest-api), and database (mongodb).  
-Each of them includes a Dockerfile required to build the image for a specific service.
-
-The `client` directory also contains the Nginx server configuration file. There is also a separate directory (`db_dumps`) used as a volume to store database data even after the container is stopped.
-
-The entire project is tied together by the `docker-compose.yml` file, which connects the containers into a single application environment.
-
-## Requirements  
-To run the application, Docker Engine and Docker Compose must be installed on the operating system, and a relatively modern web browser is required.
-
-## Instructions  
-1. Download the entire repository.  
-2. Navigate to the main project directory where the `docker-compose.yml` file is located.  
-3. Run the command `docker compose up -d` (or `docker compose up -d --build`) to build and start all application services.  
-4. Open a web browser and go to `http://localhost:3100` (you can change the port in the `docker-compose.yml` file).  
-5. To use the cryptocurrency data analysis features, you need to register and log in to an account.  
-6. After finishing your work, stop the application using the command `docker-compose down`.
-
-## Configuration  
-The project configuration is contained in the `docker-compose.yml` file. In this file, you can customize container settings such as ports, environment variables, etc., according to your needs. This is especially important if a port used by one of the application services is already in use.
-
-
+- **Michał Muzyka** — [GitHub](https://github.com/musmike)
+- **Mateusz Niedźwiedź** – [GitHub](https://github.com/JonaszGoldbaumm)

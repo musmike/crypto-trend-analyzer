@@ -6,18 +6,19 @@ namespace server.Models {
     public class User {
         [BsonId]
         public ObjectId? id { get; set; }
+
         [BsonElement("username")]
-        [Required(ErrorMessage = "Nazwa użytkownika jest wymagana!")]
-        [StringLength(20, MinimumLength = 4, ErrorMessage = "Nazwa użytkownika musi się składać od 4 do 20 znaków.")]
-        public string username { get; set; }
+        [Required(ErrorMessage = "Username is required.")]
+        [StringLength(20, MinimumLength = 4, ErrorMessage = "Username must be between 4 and 20 characters.")]
+        public string username { get; set; } = string.Empty;
 
         [BsonElement("email")]
-        [RegularExpression(@"^[^\s@]+@[^\s@]+\.[^\s@]+$", ErrorMessage = "Niepoprawny format adresu email")]
+        [RegularExpression(@"^[^\s@]+@[^\s@]+\.[^\s@]+$", ErrorMessage = "Invalid email address format.")]
         public string? email { get; set; }
 
         [BsonElement("password")]
-        [Required(ErrorMessage = "Hasło jest wymagane")]
-        [StringLength(20, MinimumLength = 4, ErrorMessage = "Hasło powinno składać się od 4 do 20 znaków!")]
-        public string password { get; set; }
+        [Required(ErrorMessage = "Password is required.")]
+        [StringLength(20, MinimumLength = 4, ErrorMessage = "Password must be between 4 and 20 characters.")]
+        public string password { get; set; } = string.Empty;
     }
 }

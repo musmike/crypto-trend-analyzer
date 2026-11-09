@@ -5,7 +5,6 @@ import moment from 'moment';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import styles from './CryptoChart.module.css';
-import debounce from 'lodash/debounce';
 
 const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
     const [dateRange, setDateRange] = useState([0, 100]);
@@ -52,22 +51,26 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
 
     useEffect(() => {
         const categoryColors = {
-            "Gospodarka": "rgb(255, 0, 0)", // Czerwony
-            "Popkultura": "rgb(0, 128, 0)", // Zielony
-            "Sport": "rgb(0, 0, 255)", // Niebieski
-            "Polityka": "rgb(255, 165, 0)", // Pomarańczowy
-            "Technologia": "rgb(128, 0, 128)" // Fioletowy
+            "Economy": "rgb(255, 0, 0)",      // Red
+            "Pop Culture": "rgb(0, 128, 0)",  // Green
+            "Sports": "rgb(0, 0, 255)",       // Blue
+            "Politics": "rgb(255, 165, 0)",   // Orange
+            "Technology": "rgb(128, 0, 128)"  // Purple
         };
 
         const cryptoColors = {
-            "BTC": "rgb(255, 51, 153)", // Różowy
-            "ETH": "rgb(0, 153, 204)", // Jasnoniebieski 
-            "BNB": "rgb(204, 0, 204)", // Purpurowy
-            "DOGE": "rgb(255, 102, 0)", // Pomarańczowy
-            "LTC": "rgb(102, 51, 0)" // Brązowy
+            "BTC": "rgb(255, 51, 153)",  // Pink
+            "ETH": "rgb(0, 153, 204)",   // Light Blue
+            "BNB": "rgb(204, 0, 204)",   // Purple
+            "DOGE": "rgb(255, 102, 0)",  // Orange
+            "LTC": "rgb(102, 51, 0)"     // Brown
         };
 
-        const minValue = Math.min(...filteredCryptoData.filter(item => item.coin === mainCrypto || item.coin === comparisonCrypto).map(item => item.value));
+        const activePrices = filteredCryptoData
+            .filter(item => item.coin === mainCrypto || item.coin === comparisonCrypto)
+            .map(item => item.value);
+
+        const minValue = activePrices.length > 0 ? Math.min(...activePrices) : 1;
 
         if (chartRef.current) {
             const chartInstance = new Chart(chartRef.current, {
@@ -76,12 +79,12 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
                     datasets: [
                         ...Object.entries(categoryColors).map(([category, color]) => ({
                             label: category,
-                            data: logarithmicScale ? filteredEventsData
-                              .filter(event => event.type === category)
-                              .map(event => ({ x: event.date.valueOf(), y: 0.3 * minValue})) :
-                              filteredEventsData
-                              .filter(event => event.type === category)
-                              .map(event => ({ x: event.date.valueOf(), y: 0.01 })),
+                            data: filteredEventsData
+                                .filter(event => event.type === category)
+                                .map(event => ({
+                                    x: moment(event.date).valueOf(),
+                                    y: logarithmicScale ? 0.3 * minValue : 0.01
+                                })),
                             borderColor: 'transparent',
                             pointStyle: logarithmicScale ? 'line' : 'triangle',
                             pointRadius: 10,
@@ -90,7 +93,7 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
                             pointBorderColor: color,
                             pointBackgroundColor: color,
                             fill: false,
-                          })),
+                        })),
                         {
                             label: mainCrypto,
                             data: filteredCryptoData.filter(item => item.coin === mainCrypto).map(item => ({ x: item.date, y: item.value })),
@@ -115,21 +118,19 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
                             time: {
                                 unit: 'month',
                                 displayFormats: {
-                                    month: 'DD.MM.YYYY'
+                                    month: 'MM/YYYY'
                                 }
                             },
                         },
                         y: {
                             type: logarithmicScale ? 'logarithmic' : 'linear',
-                            exponent: logarithmicScale ? 1 : 0,
                             title: {
                                 display: true,
-                                text: 'Cena (USD)'
+                                text: 'Price (USD)'
                             },
                             ticks: {
-                                beginAtZero: true,
                                 callback: function (value) {
-                                    return value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+                                    return '$' + Number(value).toLocaleString();
                                 }
                             }
                         }
@@ -153,12 +154,15 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
                             callbacks: {
                                 label: function (context) {
                                     if (context.dataset.label in categoryColors) {
-                                        const event = filteredEventsData.find(event => event.type === context.dataset.label && moment(event.date).valueOf() === context.parsed.x);
+                                        const event = filteredEventsData.find(
+                                            e => e.type === context.dataset.label && 
+                                                 moment(e.date).valueOf() === context.parsed.x
+                                        );
                                         if (event) {
                                             return event.name;
                                         }
                                     }
-                                    return `${context.dataset.label}: ${context.raw.y}`;
+                                    return `${context.dataset.label}: $${Number(context.raw.y).toLocaleString()}`;
                                 }
                             }
                         }
@@ -172,35 +176,19 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
         }
     }, [filteredCryptoData, filteredEventsData, mainCrypto, comparisonCrypto, logarithmicScale]);
 
-    const handleDateChange = debounce((range) => {
-        setDateRange(range);
-    }, 300);
-
-    const handleMainCryptoChange = (e) => {
-        setMainCrypto(e.target.value);
-    };
-
-    const handleComparisonCryptoChange = (e) => {
-        setComparisonCrypto(e.target.value);
-    };
-
-    const handleScaleChange = () => {
-        setLogarithmicScale(!logarithmicScale);
-    };
-
     return (
         <div className={styles.cryptoChartContainer}>
             <div className={styles.selectContainer}>
-                <label>Pierwsza kryptowaluta: </label>
-                <select className={styles.select} value={mainCrypto} onChange={handleMainCryptoChange}>
+                <label className={styles.label}>Primary Asset: </label>
+                <select className={styles.select} value={mainCrypto} onChange={(e) => setMainCrypto(e.target.value)}>
                     {['BTC', 'ETH', 'BNB', 'DOGE', 'LTC'].map((crypto) => (
                         <option key={crypto} value={crypto}>{crypto}</option>
                     ))}
                 </select>
             </div>
             <div className={styles.selectContainer}>
-                <label>Druga kryptowaluta: </label>
-                <select className={styles.select} value={comparisonCrypto} onChange={handleComparisonCryptoChange}>
+                <label className={styles.label}>Comparison Asset: </label>
+                <select className={styles.select} value={comparisonCrypto} onChange={(e) => setComparisonCrypto(e.target.value)}>
                     {['BTC', 'ETH', 'BNB', 'DOGE', 'LTC'].map((crypto) => (
                         <option key={crypto} value={crypto}>{crypto}</option>
                     ))}
@@ -208,20 +196,20 @@ const CryptoChart = ({ cryptocurrencyData, eventsData }) => {
             </div>
 
             <div>
-                <button className={styles.selectContainer} onClick={handleScaleChange}>
-                    {logarithmicScale ? 'Skala liniowa' : 'Skala logarytmiczna'}
+                <button className={styles.selectContainer} onClick={() => setLogarithmicScale(!logarithmicScale)}>
+                    {logarithmicScale ? 'Switch to Linear Scale' : 'Switch to Logarithmic Scale'}
                 </button>
             </div>
 
             <canvas ref={chartRef} className={styles.chartCanvas} />
 
-            <div>
+            <div className={styles.sliderContainer}>
                 <Slider
                     range
                     min={0}
                     max={100}
                     defaultValue={[0, 100]}
-                    onChange={handleDateChange}
+                    onChange={(range) => setDateRange(range)}
                     className={styles.slider}
                 />
             </div>

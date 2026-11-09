@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using server.DB;
 
-
 namespace server.Controllers {
     [Authorize]
     [ApiController]
@@ -14,24 +13,30 @@ namespace server.Controllers {
             _database = database;
         }
 
-        [HttpGet("{a}")]
-        public async Task<IActionResult> GetChartDataSingle(string a) {
-            var cryptocurrencies = await _database.GetCoin(a);
+        // GET: /view/all - Returns all cryptocurrency historical data and events
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllChartData() {
+            var cryptocurrencies = await _database.GetAllCoins();
             var events = await _database.GetEvents();
-
             return Ok(new { cryptocurrencies, events });
         }
 
-        [HttpGet("{a};{b}")]
-        public async Task<IActionResult>GetChartData(string a, string b) {
-            var cryptocurrencies = await _database.GetCoins(a, b);
+        // GET: /view/coin/{symbol} - Returns data for a single asset (e.g. /view/coin/BTC)
+        [HttpGet("coin/{symbol}")]
+        public async Task<IActionResult> GetChartDataSingle(string symbol) {
+            var cryptocurrencies = await _database.GetCoin(symbol);
             var events = await _database.GetEvents();
-
-            return Ok(new {cryptocurrencies, events});
+            return Ok(new { cryptocurrencies, events });
         }
-        [HttpGet("all")]
-        public async Task<IActionResult> GetChartData() {
-            var cryptocurrencies = await _database.GetAllCoins();
+
+        // GET: /view/compare?a=BTC&b=ETH - Standard RESTful comparison endpoint
+        [HttpGet("compare")]
+        public async Task<IActionResult> GetChartDataComparison([FromQuery] string a, [FromQuery] string b) {
+            if (string.IsNullOrWhiteSpace(a) || string.IsNullOrWhiteSpace(b)) {
+                return BadRequest("Both 'a' and 'b' query parameters are required for comparison.");
+            }
+
+            var cryptocurrencies = await _database.GetCoins(a, b);
             var events = await _database.GetEvents();
             return Ok(new { cryptocurrencies, events });
         }

@@ -7,5 +7,6 @@ namespace server.DB {
         Task<IEnumerable<Models.Coin>> GetAllCoins();
         Task<IEnumerable<Models.Event>> GetEvents();
         IMongoCollection<Models.User> GetUsers();
+        Task SeedInitialDataAsync();
     }
 }

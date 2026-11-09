@@ -1,0 +1,5 @@
+cat << 'EOF' > client/.dockerignore
+node_modules
+build
+.git
+EOF

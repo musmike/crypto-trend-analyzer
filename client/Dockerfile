@@ -1,36 +1,23 @@
-# Obraz bazowy zawierajacy srodowisko Node.js
-FROM node:alpine as build
-
-# Ustawienie katalogu roboczego
+# Build stage with Node.js
+FROM node:alpine AS build
 WORKDIR /app
 
-# Skopiowanie plików z zależnościami
-COPY package.json .
-COPY package-lock.json .
-
-# Instalacja zależności
+# Copy dependency definitions and install
+COPY package.json package-lock.json ./
 RUN npm install
 
-# Skopiowanie pozostałych plików
+# Copy source code and build production bundle
 COPY . .
-
-# Zbudowanie aplikacji React
 RUN npm run build
 
-# Obraz produkcyjny nginx
+# Production stage with Nginx
 FROM nginx:alpine
 
-# Skopiowanie plikow zbudowanego projektu 
-# do katalogu publicznego serwera Nginx
+# Copy compiled assets to Nginx web root
 COPY --from=build /app/build /usr/share/nginx/html
 
-# Skopiowanie konfiguracji NGINX
+# Copy custom Nginx configuration
 COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
-# Wyksponowanie portu 80
 EXPOSE 80
-
-# Uuchomienie serwera Nginx w tle
 CMD ["nginx", "-g", "daemon off;"]
-
-

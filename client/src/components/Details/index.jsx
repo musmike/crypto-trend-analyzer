@@ -15,8 +15,7 @@ const Details = () => {
     }, []);
 
     const fetchData = async () => {
-
-        const token = localStorage.getItem("token")
+        const token = localStorage.getItem("token");
 
         if (token) {
             try {
@@ -30,23 +29,17 @@ const Details = () => {
                 };
 
                 const { data: res } = await axios(config);
-                const cryptocurrencies = res.cryptocurrencies;
-                const events = res.events;
-
-                setCryptocurrencyData(cryptocurrencies);
-                setEventsData(events);
+                setCryptocurrencyData(res.cryptocurrencies || []);
+                setEventsData(res.events || []);
                 setIsLoading(false);
-
-            }
-            catch (error) {
+            } catch (error) {
                 if (error.response && error.response.status >= 400 && error.response.status <= 500) {
-                    localStorage.removeItem("token")
-                    window.location.reload()
+                    localStorage.removeItem("token");
+                    window.location.reload();
                 }
                 setIsLoading(false); 
             }
-        }
-        else {
+        } else {
             window.location.reload();
             setIsLoading(false); 
         }
@@ -54,11 +47,9 @@ const Details = () => {
 
     return (
         <div className={styles.details_container}>
-    
             <div className={styles.content_container}>
-    
                 <div className={styles.button_container}>
-                    <button onClick={fetchData} className={styles.refresh_button}>Odśwież dane 🗘</button>
+                    <button onClick={fetchData} className={styles.refresh_button}>Refresh Data 🗘</button>
                 </div>
 
                 {isLoading ? (
@@ -68,11 +59,11 @@ const Details = () => {
                 ) : (
                     <>
                         <div className={styles.chart_container}>
-                            <h2>Kształtowanie się wartości kryptowalut w czasie</h2>
+                            <h2>Cryptocurrency Price Evolution and Historical Events</h2>
                             {cryptocurrencyData.length > 0 && eventsData.length > 0 ? (
                                 <CryptoChart cryptocurrencyData={cryptocurrencyData} eventsData={eventsData} />
                             ) : (
-                                <p>Brak danych do wyświetlenia</p>
+                                <p>No data available to display.</p>
                             )}
                         </div>
     
@@ -80,7 +71,7 @@ const Details = () => {
                             {cryptocurrencyData.length > 0 ? (
                                 <CryptoTable cryptocurrencyData={cryptocurrencyData} />
                             ) : (
-                                <p>Brak danych do wyświetlenia</p>
+                                <p>No data available to display.</p>
                             )}
                         </div>
     
@@ -88,7 +79,7 @@ const Details = () => {
                             {cryptocurrencyData.length > 0 && eventsData.length > 0 ? (
                                 <EventInfluenceTables cryptocurrencyData={cryptocurrencyData} eventsData={eventsData} />
                             ) : (
-                                <p>Brak danych do wyświetlenia</p>
+                                <p>No data available to display.</p>
                             )}
                         </div>
                     </>

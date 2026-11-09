@@ -12,11 +12,13 @@ const CryptoTable = ({ cryptocurrencyData }) => {
 
 	const getPrice = (symbol, timestamp) => {
 		const data = cryptocurrencyData.find(item => item.coin === symbol && item.date === timestamp);
-		return data ? `$${data.value}` : null;
+		return data ? `$${Number(data.value).toLocaleString('en-US')}` : null;
 	};
 
+	const totalPages = Math.ceil(timestamps.length / rowsPerPage);
+
 	const handleChangePage = (pageNumber) => {
-		if (pageNumber >= 1 && pageNumber <= Math.ceil(timestamps.length / rowsPerPage)) {
+		if (pageNumber >= 1 && pageNumber <= totalPages) {
 			setCurrentPage(pageNumber);
 		}
 	};
@@ -34,7 +36,7 @@ const CryptoTable = ({ cryptocurrencyData }) => {
 			<table className={styles.cryptoTable}>
 				<thead>
 					<tr>
-						<th>Data</th>
+						<th>Date</th>
 						{cryptocurrencies.map(crypto => (
 							<th key={crypto}>
 								{crypto} ({fullNames[crypto]})
@@ -55,7 +57,7 @@ const CryptoTable = ({ cryptocurrencyData }) => {
 			</table>
 			<div className={styles.pagination}>
 				<label className={styles.rowsPerPageLabel}>
-					Wierszy na stronę:{' '}
+					Rows per page:{' '}
 					<select value={rowsPerPage} onChange={(e) => setRowsPerPage(parseInt(e.target.value))} className={styles.rowsPerPageSelect}>
 						<option value={10}>10</option>
 						<option value={30}>30</option>
@@ -63,24 +65,22 @@ const CryptoTable = ({ cryptocurrencyData }) => {
 					</select>
 				</label>
 				<div className={styles.pageNavigation}>
-					<button disabled={currentPage === 1} onClick={() => handleChangePage(currentPage - 1)} className={styles.navigationButton}>Poprzednia</button>
-					<button disabled={currentPage * rowsPerPage >= timestamps.length} onClick={() => handleChangePage(currentPage + 1)} className={styles.navigationButton}>Następna</button>
+					<button disabled={currentPage === 1} onClick={() => handleChangePage(currentPage - 1)} className={styles.navigationButton}>
+						Previous
+					</button>
+					<button disabled={currentPage * rowsPerPage >= timestamps.length} onClick={() => handleChangePage(currentPage + 1)} className={styles.navigationButton}>
+						Next
+					</button>
 					<input
 						type="number"
 						value={pageNumberInput}
-						onChange={(e) => {
-							const value = e.target.value;
-							const regex = /^[0-9]+$/;
-							if (value.match(regex)) {
-								setPageNumberInput(value);
-							} else {
-								setPageNumberInput('');
-							}
-						}}
+						onChange={(e) => setPageNumberInput(e.target.value.replace(/[^0-9]/g, ''))}
 						className={styles.pageNumberInput}
-						placeholder={`Strona ${currentPage} z ${Math.ceil(timestamps.length / rowsPerPage)}`}
+						placeholder={`Page ${currentPage} of ${totalPages}`}
 					/>
-					<button onClick={() => handleChangePage(parseInt(pageNumberInput))} className={styles.goToPageButton}>Idź</button>
+					<button onClick={() => handleChangePage(parseInt(pageNumberInput))} className={styles.goToPageButton}>
+						Go
+					</button>
 				</div>
 			</div>
 		</div>

@@ -403,3 +403,6 @@ FodyWeavers.xsd
 /db_dumps/WiredTiger
 /db_dumps/WiredTiger.lock
 /db_dumps/WiredTiger.turtle
+
+# Environment variables
+.env
